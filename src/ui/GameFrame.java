@@ -1198,6 +1198,11 @@ public class GameFrame extends JFrame{
 
         }
 
+        public void printEventText(String string, String playerName, String rivalName) {
+            String fixedString = string.replace(PLAYER_NAME_PLACEHOLDER, playerName).replace(RIVAL_NAME_PLACEHOLDER, rivalName);
+            addString(fixedString);
+        }
+
         public void printEventText(List<String> stringList, String playerName, String rivalName) {
             for (String string : stringList) {
                 String fixedString = string.replace(PLAYER_NAME_PLACEHOLDER, playerName).replace(RIVAL_NAME_PLACEHOLDER, rivalName);

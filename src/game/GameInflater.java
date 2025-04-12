@@ -25,10 +25,6 @@ import java.util.*;
 public class GameInflater {
 
     private final static String NO_JAR_MODE_PREFIX = "bin/";
-    private final static String NAME_INPUT_TITLE = "Name Entry";
-private final static String NAME_INPUT_MESSAGE = "What is your name?";
-    private final static String RIVAL_INPUT_TITLE = "Rival Name";
-    private final static String RIVAL_INPUT_MESSAGE = "What is your rival's name?";
     private final static String NAME_KEY = "name";
     private final static String ITEMS_KEY = "items";
     private final static String ITEM_KEY = "item";
@@ -59,6 +55,7 @@ private final static String NAME_INPUT_MESSAGE = "What is your name?";
     private static final String OPTIONS_KEY = "options";
     private static final String PC_KEY = "pc";
     private static final String BAG_KEY = "bag";
+    private static final String PROLOGUE_KEY = "prologue";
     private final static String POKÉMON_CHOICE_EVENT = "PokémonChoice";
     private final static String POKÉMON_EVENT = "Pokémon";
     private final static String RIVAL_BATTLE_EVENT = "RivalBattle";
@@ -78,11 +75,13 @@ private final static String NAME_INPUT_MESSAGE = "What is your name?";
             String saveData = scanner.next();
             String decodedSave = new String(DECODER.decode(saveData));
             JSONObject saveObj = (JSONObject) PARSER.parse(decodedSave);
-            Player player;
+            //If we are a new game, we create the player later
+            Player player = null;
+            //If we are not a new game, we never need the prologue
+            List<String> prologue = null;
             if (newGame) {
-                String playerName = gameFrame.getInputHelper().getString(NAME_INPUT_TITLE, NAME_INPUT_MESSAGE);
-                String rivalName = gameFrame.getInputHelper().getString(RIVAL_INPUT_TITLE, RIVAL_INPUT_MESSAGE);
-                player = new Player(playerName, rivalName);
+                JSONArray prologueObj = (JSONArray) saveObj.get(PROLOGUE_KEY);
+                prologue = new ArrayList<>(prologueObj);
             } else {
                 JSONObject playerObj = (JSONObject) saveObj.get("player");
                 player = parsePlayer(playerObj);
@@ -90,7 +89,7 @@ private final static String NAME_INPUT_MESSAGE = "What is your name?";
             JSONObject areasObj = (JSONObject) saveObj.get("areas");
             inflateAreas(gameMap, areasObj);
             //When parsing areas, I need to check for an "items" key, and if it doesn't exist pass in an empty list for items
-            return new Game(gameFrame, gameMap, player);
+            return new Game(gameFrame, gameMap, player, prologue);
         } catch (ParseException e) {
             e.printStackTrace();
             System.err.println("Parse exception: " + e.getMessage());

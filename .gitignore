@@ -42,3 +42,6 @@ out/
 
 # Save files (if you don't want to include them)
 *.ptvsav 
+
+# Data files
+src/json-data/

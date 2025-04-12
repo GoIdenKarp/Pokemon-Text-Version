@@ -20,6 +20,13 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Game {
 
+    private final static String NAME_INPUT_TITLE = "Name Entry";
+    private final static String NAME_INPUT_MESSAGE = "What is your name?";
+    private final static String RIVAL_INPUT_TITLE = "Rival Name";
+    private final static String RIVAL_INPUT_MESSAGE = "What is your rival's name?";
+    private final static String GET_PLAYER_NAME = "{{getName}}";
+    private final static String GET_RIVAL_NAME = "{{getRivalName}}";
+
     private static final int TALL_GRASS = 0;
     private static final int SURFING = 1;
     private static final int FISHING = 2;
@@ -56,9 +63,9 @@ public class Game {
     private Set<Area> flyOptions;
     private Set<String> eventFlags;
     private int starterChoice = -1;
+    private List<String> prologue;
 
-
-    public Game(GameFrame gameFrame, List<Area> areaList, Player player) {
+    public Game(GameFrame gameFrame, List<Area> areaList, Player player, List<String> prologue) {
         this.gameFrame = gameFrame;
         factory = new PokémonFactory(gameFrame.getInputHelper(), gameFrame.getGamePrinter());
         this.areaList = areaList;
@@ -67,6 +74,7 @@ public class Game {
         saveFile = "";
         this.player = player;
         eventFlags = new HashSet<>();
+        this.prologue = prologue;
     }
 
     private void makeWorldMap() {
@@ -521,7 +529,23 @@ public class Game {
         currentArea = areaList.stream().filter(area -> area.getName().equals(startingArea)).findFirst().orElse(areaList.get(0));
         lastHealingArea = currentArea;
         flyOptions.add(currentArea);
+        runPrologue();
         run();
+    }
+
+    private void runPrologue() {
+        String playerName = "";
+        String rivalName = "";
+        for (String line : prologue) {
+            if (line.contains(GET_PLAYER_NAME)) {
+                playerName = gameFrame.getInputHelper().getString(NAME_INPUT_TITLE, NAME_INPUT_MESSAGE);
+            } else if (line.contains(GET_RIVAL_NAME)) {
+                rivalName = gameFrame.getInputHelper().getString(RIVAL_INPUT_TITLE, RIVAL_INPUT_MESSAGE);
+                player = new Player(playerName, rivalName);
+            } else {
+                gameFrame.getGamePrinter().printEventText(line, playerName, rivalName);
+            }
+        }
     }
 
     private void run() {
