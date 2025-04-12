@@ -2,8 +2,8 @@ package events;
 
 import enums.Species;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class PokémonChoiceEvent extends SubEvent {
 
@@ -40,6 +40,6 @@ public class PokémonChoiceEvent extends SubEvent {
     }
 
     public List<String> getOptions() {
-        return new ArrayList<String>();
+        return species.stream().map(Species::toString).collect(Collectors.toList());
     }
 }

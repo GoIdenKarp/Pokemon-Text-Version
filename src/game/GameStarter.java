@@ -11,7 +11,7 @@ import java.util.Arrays;
 
 public class GameStarter {
 
-    private final static boolean DEBUG_MODE = false;
+    private final static boolean DEBUG_MODE = true;
     private final static boolean JAR_MODE = false;
     private final static String KANTO_MAP = "Kanto.region";
     private final static String KANTO_NEW_GAME = "data/Kanto.newgame";

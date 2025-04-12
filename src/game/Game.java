@@ -73,7 +73,7 @@ public class Game {
         flyOptions = new HashSet<>();
         saveFile = "";
         this.player = player;
-        eventFlags = new HashSet<>();
+        eventFlags  = new HashSet<>(Collections.singleton(""));
         this.prologue = prologue;
     }
 
@@ -82,9 +82,7 @@ public class Game {
         for (Area area : areaList) {
             worldMap.put(area.getName(), area);
         }
-    }
-
-    ;
+    };
 
     /**
      * Checks to see if the player has a a Pokémon that knows a specific move for HM move
@@ -124,7 +122,9 @@ public class Game {
         }
         if (currentArea.isHealingSpot()) {
             areaOptions.add(HEALING_OPTION);
-            areaOptions.add(PC_OPTION);
+            if (player.getParty().size() > 0) {
+                areaOptions.add(PC_OPTION);
+            }
         }
         if (currentArea.hasMart()) {
             areaOptions.add(MART_OPTION);
