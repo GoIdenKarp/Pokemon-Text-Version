@@ -6,12 +6,12 @@
             "talk": [String],
             "grass": [
                 { //names can be given to each slot object if desired; they won't affect parsing
-                    "species": int, //required //must be parseable per Species.valueOf()
+                    "species": String, //required //must be parseable per Species.map()
                     "min": int, //required
                     "max": int, //required
-                    "rate": 45, //required
+                    "rate": int, //required //percent chance to encounter
                     "item": Item, //must be parseable per ItemMapper.map()
-                    "chance": int //required if item present
+                    "chance": int //chance of the wild Pokémon having the item //required if item present
                 }
                 //etc.
             ],

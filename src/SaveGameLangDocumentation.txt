@@ -19,7 +19,7 @@
                     "money": int, //required
                     "party": [
                         {
-                            "species": int, //must pass through Species.valueOf() //required
+                            "species": String, //must pass through Species.map() //required
                             "level": int, //required,
                             "gender": int //nust map in Gender.valueOf()
                             "moveset": [String] //each must map in MoveMapper.map();
@@ -54,7 +54,7 @@
         ],
         "party": [
             {
-                "species": int //must map in Species.valueOf(),
+                "species": String //must map in Species.map(),
                 "name": String,
                 "ivs": [int], //required
                 "evs": [int], //required,

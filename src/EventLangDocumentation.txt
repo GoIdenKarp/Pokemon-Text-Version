@@ -2,14 +2,14 @@
 {
     "type": String //"Pokémon", "PokémonChoice", "Item", "Wild", "Trainer", "RivalBattle",
     "before": [String], //required
-   "after": [String], //required
+    "after": [String], //required
 },
 
 //All SubEvents also have unique properties (they go in the same object):
 
 //Pokémon
 {
-    "species": int, //parseable in Species.valueOf() //required
+    "species": String, //parseable in Species.map() //required
     "level": int, //required
     "item": String //parseable in ItemMapper.map()
 }
@@ -17,7 +17,7 @@
 //PokémonChoice
 {
     "prompt": String, //required
-    "options": [int], //each must parse in Species.valueOf() //required
+    "options": [String], //each must parse in Species.map() //required
 }
 
 //Item
@@ -28,7 +28,7 @@
 
 //Wild
 {
-    "species": int, //must parse in Species.valueOf() //required,
+    "species": String, //must parse in Species.map() //required,
     "level": int //required
     "item": String //must pase in ItemMapper.map()
 }
@@ -44,7 +44,7 @@
     "double": boolean, //required
     "party": [
         {
-            "species": int, //must map in Species.valueOf() //required
+            "species": String, //must map in Species.map() //required
             "level": int //required,
             "gender": int //must map in Gender.valueOf(),
             moveset: [String] //each must map in MoveMapper.map()
@@ -63,7 +63,7 @@
         "parties": [
             [
                 {
-                    "species": int, //must map in Species.valueOf() //required
+                    "species": String, //must map in Species.map() //required
                      "level": int //required,
                      "gender": int //must map in Gender.valueOf(),
                       "moveset": [String] //each must map in MoveMapper.map()
