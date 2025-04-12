@@ -26,7 +26,6 @@ public class Bulbasaur extends Pokémon {
     private static final Map<Integer, Class<? extends Move>[]> LEARNSET;
     static {
         LEARNSET = new TreeMap<>();
-        //TODO: remove dragonrage
         Class<? extends Move>[] levelOne = new Class[]{Tackle.class};
         Class<? extends Move>[] levelThree = new Class[]{Growl.class};
         Class<? extends Move>[] levelSeven = new Class[]{LeechSeed.class};

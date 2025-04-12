@@ -4,7 +4,6 @@ import enums.Weather;
 import items.Item;
 import trainer.Trainer;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
 

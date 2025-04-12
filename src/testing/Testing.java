@@ -29,6 +29,7 @@ public class Testing {
         JSONObject testObj = (JSONObject) parser.parse(decoded);
         System.out.println(encoded);
         System.out.println(testObj);
+        scanner.close();
     }
 
     public static void testSaveParsing() throws IOException, ParseException {

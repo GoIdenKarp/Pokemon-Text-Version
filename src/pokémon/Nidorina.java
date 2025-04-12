@@ -15,7 +15,6 @@ public class Nidorina extends Pokémon {
     private static final Ability[] POTENTIAL_ABILITIES = {Ability.POISON_POINT, Ability.RIVALRY};
     private static final int XP_YIELD = 128;
     private static final String SPECIES_NAME = "Nidorina";
-    private static final Boolean CAN_EVOLVE = true;
     private static final List<Type> TYPES = new ArrayList<>(Arrays.asList(Type.POISON));
     private static final double genderRatio = 0;
     private static final EvolveMethod EVOLVE_METHOD = EvolveMethod.STONE;

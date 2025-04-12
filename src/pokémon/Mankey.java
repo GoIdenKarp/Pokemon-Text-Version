@@ -129,13 +129,14 @@ public class Mankey extends Pokémon {
     }
 
     @Override
-    public String getCategory() {
-        return getCategory();
-    }
-
-    @Override
     public String getHeight() {
         return HEIGHT;
+    }
+
+
+    @Override
+    public String getCategory() {
+        return CATEGORY;
     }
 
     @Override

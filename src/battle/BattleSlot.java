@@ -443,8 +443,6 @@ public class BattleSlot {
     }
 
     public boolean decrementEncore() {
-        boolean test = encoreCounter == 0;
-
         if (forceEndEncore) {
             encoreCounter = 0;
             return true;

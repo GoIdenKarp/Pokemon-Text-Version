@@ -12,19 +12,10 @@ import items.ItemMapper;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import util.JsonBase64Util;
-import trainer.PartySlot;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
 
 public class Region {
-
-    private final static List<PartySlot> kantoRivalGrassOne = new ArrayList<>(Arrays.asList(new PartySlot(Species.BULBASAUR, 5)));
-    private final static List<PartySlot> kantoRivalWaterOne = new ArrayList<>(Arrays.asList(new PartySlot(Species.SQUIRTLE, 5)));
-    private final static List<PartySlot> kantoRivalFireOne = new ArrayList<>(Arrays.asList(new PartySlot(Species.CHARMANDER, 5)));
 
     public final static String NO_JAR_MODE_PREFIX = "bin/";
 
@@ -51,7 +42,6 @@ public class Region {
 
     public static ArrayList<Area> createRegion(String filename, boolean JAR_MODE) {
         try {
-            ArrayList<Area> areaList = new ArrayList<>();
             String prefix = "data/";
             prefix = (JAR_MODE) ? prefix : NO_JAR_MODE_PREFIX + prefix;
             String filePath = prefix + filename;

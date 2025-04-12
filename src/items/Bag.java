@@ -1,7 +1,6 @@
 package items;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class Bag {
 

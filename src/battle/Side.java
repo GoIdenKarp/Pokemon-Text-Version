@@ -129,7 +129,7 @@ public class Side {
     }
 
     public boolean isTailwindActive() {
-            return isTailwindActive;
+        return isTailwindActive;
     }
 
     public void activateTailwind() {

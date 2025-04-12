@@ -174,8 +174,6 @@ public class BattleRedux implements Comparator<Action>{
     Player player;
     private ArrayList<Pokémon> compParty;
     private Trainer oppTrainer;
-    private List<Action> playerActions;
-    private List<Action> compActions;
     private Weather weather;
     private GameFrame.BattlePrinter battlePrinter;
     private GameFrame.InputHelper inputHelper;
@@ -395,6 +393,8 @@ public class BattleRedux implements Comparator<Action>{
             case HEAL_FIFTY:
                 userSlot.getPokémon().heal(50);
                 battlePrinter.printHealItemUsed(userSlot.getPokémon(), 50);
+                break;  
+            default:
                 break;
         }
     }
@@ -642,7 +642,6 @@ public class BattleRedux implements Comparator<Action>{
         if (!playerSlot.needsAction()) {
             return getPlayerMove(playerSlot);
         }
-        boolean choiceMade = false;
         while (true) {
             int battleChoice = inputHelper.getBattleChoice(BATTLE_OPTIONS, playerSlot.getPokémon());
             Action action = null;
@@ -1155,7 +1154,7 @@ public class BattleRedux implements Comparator<Action>{
 
         int accuracyRoll = ThreadLocalRandom.current().nextInt(1, 101);
         double moveAccuracy = action.getMove().getAccuracy();
-        if (ONE_HIT_KO_MOVES.contains(action.getMove())) {
+        if (ONE_HIT_KO_MOVES.contains(action.getMove().getClass())) {
             moveAccuracy = oneHitKOAccCheck(action, targetSlot);
         }
         if (action.getUserSlot().getPokémon().getAbility().equals(Ability.COMPOUND_EYES)) {
@@ -1617,7 +1616,7 @@ public class BattleRedux implements Comparator<Action>{
         } else {
             for (BattleSlot target : action.getTargetSlots()) {
                 int dmg;
-                if (ONE_HIT_KO_MOVES.contains(action.getMove())) {
+                if (ONE_HIT_KO_MOVES.contains(action.getMove().getClass())) {
                     battlePrinter.printOneHitKO();
                     dmg = target.getPokémon().getCurrentHP();
                 } else {
@@ -1696,6 +1695,8 @@ public class BattleRedux implements Comparator<Action>{
                 break;
             case SELF_DEF_UP:
                 attemptToChangeStat(action.getUserSlot(), DEF_INDEX, 1, true);
+                break;
+            default:
                 break;
         }
     }
@@ -1817,6 +1818,8 @@ public class BattleRedux implements Comparator<Action>{
                 for (BattleSlot opp : slot.getOpposingSlots()) {
                     attemptToChangeStat(opp, ATK_INDEX, -1, false);
                 }
+                break;
+            default:
                 break;
         }
 
@@ -2365,6 +2368,8 @@ public class BattleRedux implements Comparator<Action>{
                 battlePrinter.printPoisonDamage(mon);
                 inflictDamage(slot, dmg);
                 mon.incrementToxicCounter();
+                break;
+            default:
                 break;
         }
     }

@@ -834,6 +834,7 @@ public class GameFrame extends JFrame{
                 }
 
             }
+            scanner.close();
             return number;
         }
 

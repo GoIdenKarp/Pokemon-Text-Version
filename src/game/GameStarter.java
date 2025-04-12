@@ -6,7 +6,6 @@ import ui.GameFrame;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -18,11 +17,7 @@ public class GameStarter {
     private final static String KANTO_NEW_GAME = "data/kanto.newgame";
 
     private final static String KANTO = "Kanto";
-    private final static String BULBASAUR = "Bulbasaur";
-    private final static String CHARMANDER = "Charmander";
-    private final static String SQUIRTLE = "Squirtle";
     private final static ArrayList<String> gameOptions = new ArrayList<>(Arrays.asList(KANTO));
-    private final static ArrayList<String> kantoStarterOptions = new ArrayList<>(Arrays.asList(BULBASAUR, CHARMANDER, SQUIRTLE));
 
     private GameFrame gameFrame;
 

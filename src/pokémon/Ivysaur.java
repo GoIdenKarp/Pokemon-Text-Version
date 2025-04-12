@@ -15,7 +15,6 @@ public class Ivysaur extends Pokémon {
     private static final Ability[] POTENTIAL_ABILITIES = {Ability.OVERGROW};
     private static final int XP_YIELD = 142;
     private static final String SPECIES_NAME = "Ivysaur";
-    private static final Boolean CAN_EVOLVE = true;
     private static final List<Type> TYPES = new ArrayList<>(Arrays.asList(Type.GRASS, Type.POISON));
     private static final double genderRatio = 87.5;
     private static final EvolveMethod EVOLVE_METHOD = EvolveMethod.LEVEL;

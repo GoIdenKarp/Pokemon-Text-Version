@@ -266,7 +266,7 @@ public class GameSaver {
         return monObj;
     }
 
-    private static List listify(int[] list) {
+    private static List<Integer> listify(int[] list) {
         return Arrays.stream(list).boxed().collect(Collectors.toList());
     }
 
@@ -343,7 +343,7 @@ public class GameSaver {
         Player ari = new Player("Ari", "Evil Ari");
         PokémonFactory factory = new PokémonFactory(frame.getInputHelper(), frame.getGamePrinter());
         JSONParser parser = new JSONParser();
-        ArrayList monList = new ArrayList<Pokémon>();
+        ArrayList<Pokémon> monList = new ArrayList<Pokémon>();
         Pokémon pikachu = factory.makePokémon(Species.PIKACHU, 5, Owner.PLAYER);
         monList.add(pikachu);
         Pokémon blastoise = factory.makePokémon(Species.BLASTOISE, 50, Owner.PLAYER);

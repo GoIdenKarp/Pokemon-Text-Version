@@ -71,13 +71,12 @@ private final static String NAME_INPUT_MESSAGE = "What is your name?";
 
     public static Game inflateRegion(List<Area> gameMap, String gameFile, boolean newGame,
                                      boolean JAR_MODE, GameFrame gameFrame) throws IOException, BadNameException {
-
-
         String prefix = (JAR_MODE) ? "" : NO_JAR_MODE_PREFIX;
         String filePath = prefix + gameFile;
-        String saveData = new Scanner(new File(filePath)).useDelimiter("\\Z").next();
-        try {
-            String decodedSave = new String (DECODER.decode(saveData));
+        
+        try (Scanner scanner = new Scanner(new File(filePath)).useDelimiter("\\Z")) {
+            String saveData = scanner.next();
+            String decodedSave = new String(DECODER.decode(saveData));
             JSONObject saveObj = (JSONObject) PARSER.parse(decodedSave);
             Player player;
             if (newGame) {
