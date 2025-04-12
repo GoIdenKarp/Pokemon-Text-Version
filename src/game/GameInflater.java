@@ -56,6 +56,7 @@ private final static String NAME_INPUT_MESSAGE = "What is your name?";
     private static final String MOVESET_KEY = "moveset";
     private static final String BADGES_KEY = "badges";
     private static final String RIVAL_KEY = "rival";
+    private static final String OPTIONS_KEY = "options";
     private static final String PC_KEY = "pc";
     private static final String BAG_KEY = "bag";
     private final static String POKÉMON_CHOICE_EVENT = "PokémonChoice";
@@ -73,7 +74,6 @@ private final static String NAME_INPUT_MESSAGE = "What is your name?";
                                      boolean JAR_MODE, GameFrame gameFrame) throws IOException, BadNameException {
         String prefix = (JAR_MODE) ? "" : NO_JAR_MODE_PREFIX;
         String filePath = prefix + gameFile;
-        
         try (Scanner scanner = new Scanner(new File(filePath)).useDelimiter("\\Z")) {
             String saveData = scanner.next();
             String decodedSave = new String(DECODER.decode(saveData));
@@ -189,9 +189,9 @@ private final static String NAME_INPUT_MESSAGE = "What is your name?";
         List<String> before = new ArrayList<>(beforeArray);
         JSONArray afterArray = (JSONArray) eventObj.get(AFTER_KEY);
         List<String> after = new ArrayList<>(afterArray);
-        int speciesOrdinal= (int) eventObj.get(SPECIES_KEY);
-        Species species = Species.valueOf(speciesOrdinal);
-        int level = (int) eventObj.get(LEVEL_KEY);
+        String speciesString = (String) eventObj.get(SPECIES_KEY);
+        Species species = Species.map(speciesString);
+        int level = ((Long) eventObj.get(LEVEL_KEY)).intValue();
         if (eventObj.containsKey(ITEM_KEY)) {
             String itemString = (String) eventObj.get(ITEM_KEY);
             Item item = ItemMapper.map(itemString);
@@ -203,7 +203,7 @@ private final static String NAME_INPUT_MESSAGE = "What is your name?";
     private static SubEvent parsePokémonChoiceEvent(JSONObject eventObj) throws BadNameException {
         String prompt = (String) eventObj.get(PROMPT_KEY);
         int level = ((Long) eventObj.get(LEVEL_KEY)).intValue();
-        JSONArray optionsArray = (JSONArray) eventObj.get(SPECIES_KEY);
+        JSONArray optionsArray = (JSONArray) eventObj.get(OPTIONS_KEY);
         List<Species> options = new ArrayList<>();
         for (Object obj : optionsArray) {
             String speciesString = (String) obj;
@@ -225,7 +225,7 @@ private final static String NAME_INPUT_MESSAGE = "What is your name?";
         String intro = (String) eventObj.get(INTRO_KEY);
         String winMsg = (String) eventObj.get(WIN_MSG_KEY);
         String loseMSg = (String) eventObj.get(LOSE_MSG_KEY);
-        int money = (int) eventObj.get(MONEY_KEY);
+        int money = ((Long) eventObj.get(MONEY_KEY)).intValue();
         List<List<PartySlot>> potentialParties = new ArrayList<>();
         JSONArray jsonParties = (JSONArray) eventObj.get(PARTIES_KEY);
         for (Object partyObj : jsonParties) {
@@ -243,7 +243,7 @@ private final static String NAME_INPUT_MESSAGE = "What is your name?";
         List<String> after = new ArrayList<>(afterArray);
         String type = (String) eventObj.get(TYPE_KEY);
         String name = (String) eventObj.get(NAME_KEY);
-        int money = (int) eventObj.get(MONEY_KEY);
+        int money = ((Long) eventObj.get(MONEY_KEY)).intValue();
         String winMsg = (String) eventObj.get(WIN_MSG_KEY);
         String loseMsg = (String) eventObj.get(LOSE_MSG_KEY);
         String greeting = (String) eventObj.get(GREETING_KEY);
@@ -259,8 +259,8 @@ private final static String NAME_INPUT_MESSAGE = "What is your name?";
         for (Object obj : partySlotsArray) {
             JSONObject slotObj = (JSONObject) obj;
             String speciesString = (String) slotObj.get(SPECIES_KEY);
-            Species species = Species.valueOf(speciesString);
-            int level = (int) slotObj.get(LEVEL_KEY);
+            Species species = Species.map(speciesString);
+            int level = ((Long) slotObj.get(LEVEL_KEY)).intValue();
             PartySlot slot = new PartySlot(species, level);
             if (slotObj.containsKey(ITEM_KEY)) {
                 String itemString = (String) slotObj.get(ITEM_KEY);
@@ -293,7 +293,7 @@ private final static String NAME_INPUT_MESSAGE = "What is your name?";
         List<String> after = new ArrayList<>(afterArray);
         String speciesString = (String) eventObj.get(SPECIES_KEY);
         Species species = Species.map(speciesString);
-        int level = (int) eventObj.get(LEVEL_KEY);
+        int level = ((Long) eventObj.get(LEVEL_KEY)).intValue();
         if (eventObj.containsKey(ITEM_KEY)) {
             String itemString = (String) eventObj.get(ITEM_KEY);
             Item item = ItemMapper.map(itemString);
@@ -324,14 +324,14 @@ private final static String NAME_INPUT_MESSAGE = "What is your name?";
         for (Object object : bagJSON) {
             JSONObject jsonItem = (JSONObject) object;
             Item item = ItemMapper.map((String) jsonItem.get(ITEM_KEY));
-            int amount = (int) jsonItem.get(AMOUNT_KEY);
+            int amount = ((Long) jsonItem.get(AMOUNT_KEY)).intValue();
             bag.addItem(item, amount);
         }
         JSONArray partyArray = (JSONArray) playerObj.get(PARTY_KEY);
         ArrayList<Pokémon> party = parseRichMonList(partyArray);
         JSONArray pcArray = (JSONArray) playerObj.get(PC_KEY);
         ArrayList<Pokémon> pc = parseRichMonList(pcArray);
-        int money = (int) playerObj.get(MONEY_KEY);
+        int money = ((Long) playerObj.get(MONEY_KEY)).intValue();
         return new Player(name, rival, money, badges, party, pc, bag);
     }
 

@@ -14,7 +14,7 @@ public class GameStarter {
     private final static boolean DEBUG_MODE = true;
     private final static boolean JAR_MODE = false;
     private final static String KANTO_MAP = "Kanto.region";
-    private final static String KANTO_NEW_GAME = "data/kanto.newgame";
+    private final static String KANTO_NEW_GAME = "data/Kanto.newgame";
 
     private final static String KANTO = "Kanto";
     private final static ArrayList<String> gameOptions = new ArrayList<>(Arrays.asList(KANTO));
@@ -40,7 +40,7 @@ public class GameStarter {
             ArrayList<Area> gameMap = Region.createRegion(KANTO_MAP, JAR_MODE);
             Game game = GameInflater.inflateRegion(gameMap, KANTO_NEW_GAME, newgame, JAR_MODE, gameFrame);
             if (newgame) {
-                game.startNew();
+                game.startNew("Pallet Town");
             }
             //TODO: what if it's not a new game?
         } catch (FileNotFoundException e) {
@@ -49,8 +49,8 @@ public class GameStarter {
             System.exit(0);
         } catch (BadNameException e) {
             gameFrame.getGamePrinter().printUnknownException();
-            e.printStackTrace();
             System.err.println("Bad name: " + e.getBadName());
+            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }

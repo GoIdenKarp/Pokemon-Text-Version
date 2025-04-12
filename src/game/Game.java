@@ -197,7 +197,7 @@ public class Game {
     }
 
     private void talkToPeople() {
-        gameFrame.getGamePrinter().printLine(currentArea.getTalkString());
+        gameFrame.getGamePrinter().printLine("NPC: \"" + currentArea.getTalkString() + "\"");
     }
 
     private void battleTrainer() {
@@ -368,7 +368,6 @@ public class Game {
         String movementChoice = null;
         while (true) {
             movementChoice = gameFrame.getInputHelper().getInputFromOptions(switchable, "Move", "Where would you like to move to?");
-            System.out.println(movementChoice);
             if (movementChoice.equals(BACK_AREA_OPTION)) {
                 break;
             } else {
@@ -517,9 +516,9 @@ public class Game {
     }
 
 
-    public void startNew() {
+    public void startNew(String startingArea) {
         //eventually have something here different when we run a real new game; this is just for testing
-        currentArea = areaList.get(0);
+        currentArea = areaList.stream().filter(area -> area.getName().equals(startingArea)).findFirst().orElse(areaList.get(0));
         lastHealingArea = currentArea;
         flyOptions.add(currentArea);
         run();

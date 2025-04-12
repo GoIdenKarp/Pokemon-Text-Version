@@ -45,7 +45,6 @@ public class Region {
             String prefix = "data/";
             prefix = (JAR_MODE) ? prefix : NO_JAR_MODE_PREFIX + prefix;
             String filePath = prefix + filename;
-            
             // Use the new utility class to decode the region file
             JSONObject regionObj = JsonBase64Util.decodeBase64FileToJson(filePath);
             JSONObject areasObj = (JSONObject) regionObj.get(AREAS_KEY);
@@ -91,7 +90,6 @@ public class Region {
         if (areaObj.containsKey(TALK_KEY)) {
             ArrayList<String> townspeople = new ArrayList<>();
             JSONArray talkObj = (JSONArray) areaObj.get(TALK_KEY);
-            System.out.println("parsing area: " + name + " with talkObj: " + talkObj);
             for (Object obj : talkObj) {
                 String talkString = (String) obj;
                 townspeople.add(talkString);
