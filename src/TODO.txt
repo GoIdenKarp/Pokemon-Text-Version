@@ -1,0 +1,41 @@
+- Continue to add Pokémon
+    -- Remember to add new mons to PokémonFactory and Species
+
+- Continue to refine Battle(Redux).java
+    -- ability/effect implementations
+        -- as i add more moves/mons
+        -- remember to add these moves to movesets
+    -- Moves to implement:
+         -- Mirror move is prob bad
+            -- update: Mirror Move is officially broken, as it needs to target a specific Slot to get it's last move used
+                -- how do I determine which Slot to get?
+        -- Flame Burst has an extra effect in double battles I haven't implemented yet
+        -- I don't think status moves are checked for type ineffectiveness (i.e. poison moves vs. steel types)
+            -- glare is special and can hit ghosts
+        -- Helping Hand's effect isn't implemented yet
+        -- MultiStrikeMoves shouldn't have an equal probability of every number of hits (as in, they do currently in the code, but not in the real game)
+        -- Sucker Punch is broken, since it used an outdated mechanism to determine if it would succeed
+                 -- partially fixed; will now fail if the target is not using an Attack, but will always succeed if they are
+                 -- maybe assign each battle slot a turn number and see whose turn is first?
+    -- awardEXP is a little wonky, but it should work for now
+        -- it also doesn't do EVs
+
+-- Saving and loading the game
+    -- How to handle Event MoveRequirements?
+        -- Maybe Region file includes flag to lift event, and can lift the event restriction
+            based on flags (which will have to be saved)
+    --rework generating regions
+        -- Eventually Gyms are gonna have to be a thing
+        -- I have no way of accounting for the different kinds of Fishing Rods
+
+-- Player now has a field for a caught Pokémon
+    -- check for this field to have a value after battle -> move to Game's PC field
+
+-- Event text is jumbled on one line
+
+-- Infrastructure for mart is all set up, just need to actually write the code to buy and sell
+
+-- Items
+
+-- Note to self: Side was setting Slot's Actions to null at the end of each turn. This was breaking the extra-move turns,
+      so I disabled it. I'm not sure it's needed, but I should look out for any bugs it could be causing.

@@ -1,0 +1,82 @@
+{
+    "areas": {
+        "[areaName]": { Names of these objects are just for organization; not looked at by parser
+            "items": [
+                {
+                    item: String, //must map in ItemMapper.map() //required
+                    requirement: int //must map in MoveRequirement.valueOf() //required
+                }
+                //etc.
+            ],
+            "trainers": [
+                {
+                    "type": String, //required
+                    "name": String, //required
+                    "double": boolean, //required
+                    "greeting": String, //required
+                    "winMsg": String, //required
+                    "loseMsg": String, //required
+                    "money": int, //required
+                    "party": [
+                        {
+                            "species": int, //must pass through Species.valueOf() //required
+                            "level": int, //required,
+                            "gender": int //nust map in Gender.valueOf()
+                            "moveset": [String] //each must map in MoveMapper.map();
+                        }
+                        //etc
+                    ]
+                 },
+                 //etc
+            ],
+            "events": [
+                {
+                    "startFlag": String, //required
+                    "movementFlags": [[String, String]], //each must be valid area name //required
+                    "eventFlags": [String] //required
+                    subEvents: [SubEvent] //see EventLangDocumentation.txt //required
+                },
+                //etc.
+            ]
+        },
+        //etc.
+    },
+    "player": {
+        "name": String, //required
+        "rival": String, //required
+        "badges": [String], //required,
+        "bag": [
+            {
+                "item": String, //must parse in ItemMapper.map() //required
+                "amount": int //required
+            },
+            //etc.
+        ],
+        "party": [
+            {
+                "species": int //must map in Species.valueOf(),
+                "name": String,
+                "ivs": [int], //required
+                "evs": [int], //required,
+                "currXP": int, //required,
+                "level": int, //required,
+                "gender": int, //must map in Gender.valueOf() //required,
+                "moveset": [
+                    {
+                        "name": String, //must map in MoveMapper.map() //required,
+                        "currPP": int, //required,
+                        "currMaxPP": int //required
+                    },
+                    //etc.
+                ],
+                "stats": [int], //required,
+                "status": int,
+                "currHP": int,
+                "nature": int
+            },
+            //etc
+        ],
+        "pc": //same as party
+
+    }
+}

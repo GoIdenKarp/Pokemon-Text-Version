@@ -1,0 +1,117 @@
+Pallet Town
+###NAME###
+###ITEMS###
+null
+/startFlag
+Pallet Town
+Route 1
+/MFlags
+OAKPARCEL
+/EFlags
+You're finally about to start your Pokémon adventure!
+You go to Professor Oak's lab to get your very first Pokémon.
+But when you get there, you find only your rival, {{rival}}.
+So you decide to go out on Route 1 by yourself.
+Before you can take a step into the tall grass, a voice calls out to you.
+It's Professor Oak!
+Oak: Hey! Wait! Don't go out!
+Oak: It's unsafe! Wild Pokémon live in tall grass!
+Oak: You need your own Pokémon for protection.
+Oak: I know! Here, come with me!
+Professor Oak leads you into his lab, where {{rival}} is waiting.
+{{rival}}: Gramps! I'm fed up with waiting!
+Oak: {{rival}}? Let me think...
+Oak: Oh, that's right! I told you to come! Just wait!
+Oak: Here, Ari.
+Oak: There are three Pokémon here. Haha!
+Oak: The Pokémon are held inside these Poké Balls.
+Oak: When I was young, I was a serious Pokémon trainer.
+Oak: But now, in my old age, I have only these three left.
+Oak: You can have one. Go on, choose!
+{{rival}}: Hey! Gramps! No fair! What about me?
+Oak: Be patient, {{rival}}. You can have one too!
+/Before
+As soon as you've made your choice, {{rival}} runs over to pick his.
+/After
+PokémonChoice
+Who will be your first partner?
+5
+Bulbasaur
+Charmander
+Squirtle
+SUB_EVENT_END
+{{rival}}: Wait, {{player}}! Let's check out our Pokémon!
+{{rival}}: Come on, I'll take you on!
+/Before
+{{rival}}: Okay! I'll make my Pokémon battle to toughen it up!
+{{rival}}: {{player}}! Gramps! Smell you later!
+/After
+RivalBattle
+Come on, I'll take you on!
+WHAT? Unbelievable! I picked the wrong Pokémon!
+Am I great or what?
+80
+Charmander None 5
+/Party
+Squirtle None 5
+/Party
+Bulbasaur None 5
+STOP
+###EVENTS###
+###TRAINERS###
+###AREA###
+Route 1
+###NAME###
+###ITEMS###
+###EVENTS###
+###TRAINERS###
+###AREA###
+Viridian City
+###NAME###
+###ITEMS###
+OAKPARCEL
+/startFlag
+/MFlags
+GETDEX
+/EFlags
+As you head into Viridian City’s Poké Mart,
+the salesman calls you over to the register
+“Hey, you came from Pallet Town, right?”
+“Can you deliver this package to Professor Oak?”
+“He had it on special order.”
+/Before
+"Tell him I said hi!"
+/After
+Item
+OAKPARCEL
+1
+SUB_EVENT_END
+STOP
+###EVENTS###
+###TRAINERS###
+###AREA###
+Route 2
+###NAME###
+###ITEMS###
+###EVENTS###
+###TRAINERS###
+###AREA###
+Viridian Forest
+###NAME###
+###ITEMS###
+###EVENTS###
+Bug Catcher
+Rick
+false
+Generic Greeting
+Generic Win Message
+Generic Loss Message
+72
+Weedle None 6
+Caterpie None 6
+STOP
+###TRAINERS###
+###AREA###
+Pallet Town,Route 1
+Viridian City,Route 2
+###MOVEMENTS###

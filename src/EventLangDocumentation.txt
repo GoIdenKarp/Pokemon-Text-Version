@@ -1,0 +1,76 @@
+//All SubEvents share these common properties:
+{
+    "type": String //"Pokémon", "PokémonChoice", "Item", "Wild", "Trainer", "RivalBattle",
+    "before": [String], //required
+   "after": [String], //required
+},
+
+//All SubEvents also have unique properties (they go in the same object):
+
+//Pokémon
+{
+    "species": int, //parseable in Species.valueOf() //required
+    "level": int, //required
+    "item": String //parseable in ItemMapper.map()
+}
+
+//PokémonChoice
+{
+    "prompt": String, //required
+    "options": [int], //each must parse in Species.valueOf() //required
+}
+
+//Item
+{
+    "item": String, //much parse in ItemMapper.map() //required
+    "amount": int //required
+}
+
+//Wild
+{
+    "species": int, //must parse in Species.valueOf() //required,
+    "level": int //required
+    "item": String //must pase in ItemMapper.map()
+}
+
+//Trainer
+{
+    "type": String, //required
+    "name": String, //required
+    "greeting": String, //required,
+    "winMsg": String, //required,
+    "loseMsg": String, //required
+    "money": int, //required,
+    "double": boolean, //required
+    "party": [
+        {
+            "species": int, //must map in Species.valueOf() //required
+            "level": int //required,
+            "gender": int //must map in Gender.valueOf(),
+            moveset: [String] //each must map in MoveMapper.map()
+        },
+        //etc.
+    ]
+}
+
+//RivalBattle
+{
+     "greeting": String, //required,
+        "winMsg": String, //required,
+        "loseMsg": String, //required
+        "money": int, //required,
+        "double": boolean, //required
+        "parties": [
+            [
+                {
+                    "species": int, //must map in Species.valueOf() //required
+                     "level": int //required,
+                     "gender": int //must map in Gender.valueOf(),
+                      "moveset": [String] //each must map in MoveMapper.map()
+
+                },
+                //etc.
+            ],
+            //etc
+        ]
+}

@@ -1,0 +1,31 @@
+{
+    "areas:" { //required
+        "areaName": { //name of this object is just for reference purposes, serve no purpose in parsing
+            "name": String, //required
+            "options": [String], //Healing, Flyable, Mart
+            "talk": [String],
+            "grass": [
+                { //names can be given to each slot object if desired; they won't affect parsing
+                    "species": int, //required //must be parseable per Species.valueOf()
+                    "min": int, //required
+                    "max": int, //required
+                    "rate": 45, //required
+                    "item": Item, //must be parseable per ItemMapper.map()
+                    "chance": int //required if item present
+                }
+                //etc.
+            ],
+            "surf":, //same as grass,
+            "fishing":, //same as grass
+        }
+        //etc.
+    },
+    "connections": [ //required
+        {
+            "first": String //required,
+            "second": String //required
+            "requirement": int //required //must be parseable by MoveRequirement.valueOf()
+        }
+        //etc.
+    ]
+}

@@ -1,0 +1,7 @@
+"OAKPARCEL"
+    -- event flag for getting Oak's Parcel
+    -- set from initial story event
+"GETDEX"
+    -- Event flag for giving Oak's Parcel to Oak
+    -- Set from OAKPARCEL event
+
