@@ -17,7 +17,7 @@ import pokémon.Pokémon;
 import pokémon.PokémonFactory;
 import trainer.PartySlot;
 import trainer.Trainer;
-
+import util.Keys;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.*;
@@ -32,7 +32,8 @@ public class GameSaver {
         return encoder.encodeToString(toEncode.getBytes());
     }
 
-    public static final String FILETYPE= ".ptvsav";
+    public static final String FILETYPE = ".ptvsav";
+    public static final String JSON_EXTENSION = ".json";
 
     private static final Base64.Encoder encoder = Base64.getEncoder();
 
@@ -45,15 +46,22 @@ public class GameSaver {
     public static boolean save(Game game, String saveName) {
         String filename = saveName + FILETYPE;
         try {
-            PrintWriter writer = new PrintWriter(filename);
+            PrintWriter writer = new PrintWriter("bin/" + filename);
             JSONObject saveData = new JSONObject();
-            saveData.put("player", writePlayer(game.getPlayer()));
-            saveData.put("game", writeGameState(game));
+            saveData.put(Keys.PLAYER_KEY, writePlayer(game.getPlayer(), game.getCurrentArea()));
+            saveData.put(Keys.AREAS_KEY, writeGameState(game));
+            
 
             String saveString = encode(saveData.toJSONString());
             writer.println(saveString);
             writer.flush();
             writer.close();
+
+
+            PrintWriter jsonWriter = new PrintWriter("bin/" + saveName + JSON_EXTENSION);
+            jsonWriter.println(saveData.toJSONString());
+            jsonWriter.flush();
+            jsonWriter.close();
 
         } catch (FileNotFoundException | BadNameException e) {
             e.printStackTrace();
@@ -73,11 +81,12 @@ public class GameSaver {
 
     private static JSONObject writeArea(Area area) {
         JSONObject areaObj = new JSONObject();
-        areaObj.put("events", writeEvents(area.getEvents()));
-        areaObj.put("trainers", writeTrainers(area.getTrainers()));
-        areaObj.put("defeated", writeTrainers(area.getDefeatedTrainers()));
-        areaObj.put("items", writeAreaItems(area.getItems()));
-        areaObj.put("movements", writeMovements(area.getMovePermissions()));
+        areaObj.put(Keys.NAME_KEY, area.getName());
+        areaObj.put(Keys.EVENTS_KEY, writeEvents(area.getEvents()));
+        areaObj.put(Keys.TRAINERS_KEY, writeTrainers(area.getTrainers()));
+        //areaObj.put(Keys.DEFEATED_KEY, writeTrainers(area.getDefeatedTrainers()));
+        areaObj.put(Keys.ITEMS_KEY, writeAreaItems(area.getItems()));
+        //areaObj.put(Keys.MOVEMENTS_KEY, writeMovements(area.getMovePermissions()));
         return areaObj;
 
     }
@@ -86,8 +95,8 @@ public class GameSaver {
         JSONArray areaItems = new JSONArray();
         for (ItemBall itemBall : items) {
             JSONObject itemObj = new JSONObject();
-            itemObj.put("item", itemBall.getItem().getName());
-            itemObj.put("requirement", itemBall.getObtainRequirement().ordinal());
+            itemObj.put(Keys.ITEM_KEY, itemBall.getItem().getName());
+            itemObj.put(Keys.REQUIREMENT_KEY, itemBall.getObtainRequirement().toString());
             areaItems.add(itemObj);
         }
         return areaItems;
@@ -113,27 +122,27 @@ public class GameSaver {
 
     private static JSONObject writeTrainer(Trainer trainer) {
         JSONObject trainerObj = new JSONObject();
-        trainerObj.put("type", trainer.getType());
-        trainerObj.put("name", trainer.getName());
-        trainerObj.put("greeting", trainer.getGreeting());
-        trainerObj.put("winMsg", trainer.getWinMsg());
-        trainerObj.put("loseMsg", trainer.getLoseMsg());
-        trainerObj.put("money", trainer.getPrizeMoney());
-        trainerObj.put("party", writeTrainerMonList(trainer.getParty()));
-        trainerObj.put("double", trainer.isDoubleBattle());
+        trainerObj.put(Keys.TYPE_KEY, trainer.getType());
+        trainerObj.put(Keys.NAME_KEY, trainer.getName());
+        trainerObj.put(Keys.GREETING_KEY, trainer.getGreeting());
+        trainerObj.put(Keys.WIN_MSG_KEY, trainer.getWinMsg());
+        trainerObj.put(Keys.LOSE_MSG_KEY, trainer.getLoseMsg());
+        trainerObj.put(Keys.MONEY_KEY, trainer.getPrizeMoney());
+        trainerObj.put(Keys.PARTY_KEY, writeTrainerMonList(trainer.getParty()));
+        trainerObj.put(Keys.DOUBLE_KEY, trainer.isDoubleBattle());
         return trainerObj;
     }
 
     private static JSONObject writeWildEvent(WildEvent event) {
         JSONObject eventObj = new JSONObject();
-        eventObj.put("type", "Wild");
-        eventObj.put("species", event.getMon().ordinal());
-        eventObj.put("level", event.getLevel());
+        eventObj.put(Keys.TYPE_KEY, Keys.WILD_EVENT);
+        eventObj.put(Keys.SPECIES_KEY, event.getMon().ordinal());
+        eventObj.put(Keys.LEVEL_KEY, event.getLevel());
         if (event.getItem() != null) {
-            eventObj.put("item", event.getItem().getName());
+            eventObj.put(Keys.ITEM_KEY, event.getItem().getName());
         }
-        eventObj.put("before", event.getBeforeMain());
-        eventObj.put("after", event.getAfterMain());
+        eventObj.put(Keys.BEFORE_KEY, event.getBeforeMain());
+        eventObj.put(Keys.AFTER_KEY, event.getAfterMain());
         return eventObj;
     }
 
@@ -147,13 +156,21 @@ public class GameSaver {
 
     private static JSONObject writeEvent(GameEvent event) {
         JSONObject eventObj = new JSONObject();
-        eventObj.put("subEvents", writeSubEvents(event.getMasterList()));
-        eventObj.put("movementFlags", event.getMovementFlagsToLift());
-        eventObj.put("eventFlags", event.getEventFlagsToLift());
-        eventObj.put("reset", event.resetOnFail());
+        eventObj.put(Keys.SUB_EVENTS_KEY, writeSubEvents(event.getMasterList()));
+        eventObj.put(Keys.EVENT_FLAGS_KEY, event.getEventFlagsToLift());
+        eventObj.put(Keys.RESET_ON_FAIL_KEY, event.resetOnFail());
+        eventObj.put(Keys.IGNORE_FAIL_KEY, event.ignoreFail());
         if (!event.getCanStartFlag().isEmpty()) {
-            eventObj.put("canStart", event.getCanStartFlag());
+            eventObj.put(Keys.CAN_START_KEY, event.getCanStartFlag());
         }
+        JSONArray JSONmovementFlags = new JSONArray();
+        for (MovementFlag movementFlag : event.getMovementFlagsToLift()) {
+            JSONArray movementFlagArray = new JSONArray();
+            movementFlagArray.add(movementFlag.getAreaOne());
+            movementFlagArray.add(movementFlag.getAreaTwo());
+            JSONmovementFlags.add(movementFlagArray);
+        }
+        eventObj.put(Keys.MOVEMENT_FLAGS_KEY, JSONmovementFlags);
         return eventObj;
     }
 
@@ -179,46 +196,46 @@ public class GameSaver {
 
     private static JSONObject writeItemEvent(ItemEvent event) {
         JSONObject eventObj = new JSONObject();
-        eventObj.put("type", "Item");
-        eventObj.put("item", event.getItem().getName());
-        eventObj.put("quantity", event.getQuantity());
-        eventObj.put("before", event.getBeforeMain());
-        eventObj.put("after", event.getAfterMain());
+        eventObj.put(Keys.TYPE_KEY, Keys.ITEM_EVENT);
+        eventObj.put(Keys.ITEM_KEY, event.getItem().getEncodedName());
+        eventObj.put(Keys.AMOUNT_KEY, event.getQuantity());
+        eventObj.put(Keys.BEFORE_KEY, event.getBeforeMain());
+        eventObj.put(Keys.AFTER_KEY, event.getAfterMain());
         return eventObj;
     }
 
     private static JSONObject writePokémonEvent(PokémonEvent event) {
         JSONObject eventObj = new JSONObject();
-        eventObj.put("type", "Pokémon");
-        eventObj.put("species", event.getMon().ordinal());
-        eventObj.put("level", event.getLevel());
-        eventObj.put("before", event.getBeforeMain());
-        eventObj.put("after", event.getAfterMain());
+        eventObj.put(Keys.TYPE_KEY, Keys.POKÉMON_EVENT);
+        eventObj.put(Keys.SPECIES_KEY, event.getMon().ordinal());
+        eventObj.put(Keys.LEVEL_KEY, event.getLevel());
+        eventObj.put(Keys.BEFORE_KEY, event.getBeforeMain());
+        eventObj.put(Keys.AFTER_KEY, event.getAfterMain());
         return eventObj;
     }
 
     private static JSONObject writePokémonChoiceEvent(PokémonChoiceEvent event) {
         JSONObject eventObj = new JSONObject();
-        eventObj.put("type", "PokémonChoice");
-        eventObj.put("level", event.getLevel());
-        ArrayList<Integer> ordinalList = new ArrayList<>();
+        eventObj.put(Keys.TYPE_KEY, Keys.POKÉMON_CHOICE_EVENT);
+        eventObj.put(Keys.LEVEL_KEY, event.getLevel());
+        ArrayList<String> speciesList = new ArrayList<>();
         for (Species species : event.getSpecies()) {
-            ordinalList.add(species.ordinal());
+            speciesList.add("\"" + species.toString() + "\"");
         }
-        eventObj.put("species", ordinalList);
-        eventObj.put("before", event.getBeforeMain());
-        eventObj.put("after", event.getAfterMain());
+        eventObj.put(Keys.SPECIES_KEY, speciesList);
+        eventObj.put(Keys.BEFORE_KEY, event.getBeforeMain());
+        eventObj.put(Keys.AFTER_KEY, event.getAfterMain());
         return eventObj;
     }
 
     private static JSONObject writeRivalBattleEvent(RivalBattleEvent event) {
         JSONObject eventObj = new JSONObject();
-        eventObj.put("type", "RivalBattle");
-        eventObj.put("winMsg", event.getWinMsg());
-        eventObj.put("loseMsg", event.getLoseMsg());
-        eventObj.put("money", event.getPrizeMoney());
-        eventObj.put("before", event.getBeforeMain());
-        eventObj.put("after", event.getAfterMain());
+        eventObj.put(Keys.TYPE_KEY, Keys.RIVAL_BATTLE_EVENT);
+        eventObj.put(Keys.WIN_MSG_KEY, event.getWinMsg());
+        eventObj.put(Keys.LOSE_MSG_KEY, event.getLoseMsg());
+        eventObj.put(Keys.MONEY_KEY, event.getPrizeMoney());
+        eventObj.put(Keys.BEFORE_KEY, event.getBeforeMain());
+        eventObj.put(Keys.AFTER_KEY, event.getAfterMain());
         JSONArray metaList = new JSONArray();
         for (List<PartySlot> list : event.getPotentialParties()) {
             metaList.add(writeTrainerMonList(list));
@@ -228,10 +245,10 @@ public class GameSaver {
 
     private static JSONObject writeTrainerEvent(TrainerEvent event) {
         JSONObject eventObj = new JSONObject();
-        eventObj.put("type", "Trainer");
-        eventObj.put("trainer", writeTrainer(event.getTrainer()));
-        eventObj.put("before", event.getBeforeMain());
-        eventObj.put("after", event.getAfterMain());
+        eventObj.put(Keys.TYPE_KEY, Keys.TRAINER_EVENT);
+        eventObj.put(Keys.TRAINERS_KEY, writeTrainer(event.getTrainer()));
+        eventObj.put(Keys.BEFORE_KEY, event.getBeforeMain());
+        eventObj.put(Keys.AFTER_KEY, event.getAfterMain());
         return eventObj;
     }
 
@@ -241,18 +258,18 @@ public class GameSaver {
      */
     private static JSONObject writeMon(Pokémon mon) throws BadNameException {
         JSONObject monObj = new JSONObject();
-        monObj.put("species", Species.map(mon.getSpeciesName()).ordinal());
-        monObj.put("name", mon.getNickname());
-        monObj.put("ability", mon.getAbility().ordinal());
-        monObj.put("nature", mon.getNature().ordinal());
-        monObj.put("status", mon.getStatus().ordinal());
-        monObj.put("owner", mon.getOwner().ordinal());
-        monObj.put("gender", mon.getGender().ordinal());
-        monObj.put("evs", listify((mon.getEVs())));
-        monObj.put("stats", listify(mon.getStats()));
-        monObj.put("currHP", mon.getCurrentHP());
-        monObj.put("level", mon.getLevel());
-        monObj.put("currXP", mon.getCurrentXP());
+        monObj.put(Keys.SPECIES_KEY, mon.getSpeciesName().toUpperCase());
+        monObj.put(Keys.NAME_KEY, mon.getNickname());
+        monObj.put(Keys.ABILITY_KEY, mon.getAbility().ordinal());
+        monObj.put(Keys.NATURE_KEY, mon.getNature().ordinal());
+        monObj.put(Keys.STATUS_KEY, mon.getStatus().ordinal());
+        monObj.put(Keys.OWNER_KEY, mon.getOwner().ordinal());
+        monObj.put(Keys.GENDER_KEY, mon.getGender().ordinal());
+        monObj.put(Keys.EVS_KEY, listify((mon.getEVs())));
+        monObj.put(Keys.STATS_KEY, listify(mon.getStats()));
+        monObj.put(Keys.CURR_HP_KEY, mon.getCurrentHP());
+        monObj.put(Keys.LEVEL_KEY, mon.getLevel());
+        monObj.put(Keys.CURR_XP_KEY, mon.getCurrentXP());
         JSONArray moveList = new JSONArray();
         for (Move move : mon.getMoveSet()) {
             JSONObject moveObj = new JSONObject();
@@ -262,7 +279,7 @@ public class GameSaver {
             moveList.add(moveObj);
         }
 
-        monObj.put("moveset", moveList);
+        monObj.put(Keys.MOVESET_KEY, moveList);
         return monObj;
     }
 
@@ -284,39 +301,37 @@ public class GameSaver {
         JSONArray jsonList = new JSONArray();
         for (PartySlot slot : list) {
             JSONObject slotObj = new JSONObject();
-            slotObj.put("species", slot.getMon().ordinal());
-            slotObj.put("level", slot.getLevel());
+            slotObj.put(Keys.SPECIES_KEY, slot.getMon().ordinal());
+            slotObj.put(Keys.LEVEL_KEY, slot.getLevel());
             if (slot.getItem() != null) {
-                slotObj.put("item", slot.getItem().getName());
+                slotObj.put(Keys.ITEM_KEY, slot.getItem().getName());
             }
             if (slot.getMoveSet() != null) {
                 JSONArray moveList = new JSONArray();
                 for (Move move : slot.getMoveSet()) {
                     JSONObject moveObj = new JSONObject();
-                    moveObj.put("name", move.getName());
-                    moveObj.put("currPP", move.getCurrPP());
-                    moveObj.put("currMaxPP", move.getCurrMaxPP());
+                    moveObj.put(Keys.NAME_KEY, move.getName());
                     moveList.add(moveObj);
                 }
 
-                slotObj.put("moveset", moveList);
+                slotObj.put(Keys.MOVESET_KEY, moveList);
             }
             jsonList.add(slotObj);
         }
         return jsonList;
     }
 
-    private static JSONObject writePlayer(Player player) throws BadNameException {
+    private static JSONObject writePlayer(Player player, Area currentArea) throws BadNameException {
 
         JSONObject playerObject = new JSONObject();
-        playerObject.put("name", player.getPlayerName());
-        playerObject.put("rival", player.getRivalName());
-        playerObject.put("money", player.getMoney());
-        playerObject.put("badges", player.getBadges());
-        playerObject.put("party", writeMonList(player.getParty()));
-        playerObject.put("bag", writeBag(player.getBag()));
-        playerObject.put("PC", writeMonList(player.getPC()));
-
+        playerObject.put(Keys.NAME_KEY, player.getPlayerName());
+        playerObject.put(Keys.RIVAL_KEY, player.getRivalName());
+        playerObject.put(Keys.MONEY_KEY, player.getMoney());
+        playerObject.put(Keys.BADGES_KEY, player.getBadges());
+        playerObject.put(Keys.PARTY_KEY, writeMonList(player.getParty()));
+        playerObject.put(Keys.BAG_KEY, writeBag(player.getBag()));
+        playerObject.put(Keys.PC_KEY, writeMonList(player.getPC()));
+        playerObject.put(Keys.CURR_AREA_KEY, currentArea.getName());
         return playerObject;
     }
 
@@ -330,57 +345,11 @@ public class GameSaver {
             HashMap<Item, Integer> hashMap = bag.getPockets()[i].getItemListRaw();
             for (Item item : hashMap.keySet()) {
                 JSONObject itemObj = new JSONObject();
-                itemObj.put("item", item.getName());
-                itemObj.put("quantity", hashMap.get(item));
+                itemObj.put(Keys.ITEM_KEY, item.getName());
+                itemObj.put(Keys.AMOUNT_KEY, hashMap.get(item));
                 bagList.add(itemObj);
             }
         }
         return bagList;
-    }
-
-    public static void main(String[] args) throws ParseException, BadNameException {
-        GameFrame frame = new GameFrame(true);
-        Player ari = new Player("Ari", "Evil Ari");
-        PokémonFactory factory = new PokémonFactory(frame.getInputHelper(), frame.getGamePrinter());
-        JSONParser parser = new JSONParser();
-        ArrayList<Pokémon> monList = new ArrayList<Pokémon>();
-        Pokémon pikachu = factory.makePokémon(Species.PIKACHU, 5, Owner.PLAYER);
-        monList.add(pikachu);
-        Pokémon blastoise = factory.makePokémon(Species.BLASTOISE, 50, Owner.PLAYER);
-        monList.add(blastoise);
-        Pokémon beedrill = factory.makePokémon(Species.BEEDRILL, 36, Owner.PLAYER);
-        monList.add(beedrill);
-
-        ari.setParty(monList);
-        ari.addBadge("Boulder Badge");
-
-
-        JSONObject playerObj = writePlayer(ari);
-        //System.out.println(playerObj);
-        String playerEncoded = encode(playerObj.toJSONString());
-      //  System.out.println(playerEncoded);
-        String decoded = new String(Base64.getDecoder().decode(playerEncoded));
-        JSONObject decodedPlayer = (JSONObject) parser.parse(decoded);
-        //System.out.println(decodedPlayer);
-
-        ArrayList<String> test = new ArrayList<>(Arrays.asList("foo", "bar", "baz", "qux"));
-        JSONObject string = new JSONObject();
-        string.put("test", test);
-        System.out.println(string);
-
-        String encoded = encode(string.toJSONString());
-        String decodedList = new String(Base64.getDecoder().decode(encoded));
-        JSONObject decodedString = (JSONObject) parser.parse(decodedList);
-        System.out.println(decodedString);
-
-
-//        JSONArray array = writeMonList(monList);
-//        System.out.println(array);
-//        String encodedArray = encode(array.toJSONString());
-//        System.out.println(encodedArray);
-//        String decodedString = new String(Base64.getDecoder().decode(encodedArray));
-//        System.out.println(decodedString);
-//        JSONArray decodedArray = (JSONArray) parser.parse(decodedString);
-//        System.out.println(((JSONObject) decodedArray.get(0)).get("moveset"));
     }
 }

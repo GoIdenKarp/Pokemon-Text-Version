@@ -1136,7 +1136,7 @@ public class GameFrame extends JFrame{
         private static final String EVOLVE_CANCELLED = "%s stopped evolving.";
         private static final String OBTAIN_ITEMS = "You got %d %s%s";
         private static final String SAVE_SUCCESS = "Save successful!";
-
+        private static final String NOT_YET_IMPLEMENTED = "This feature is not yet implemented.";
 
         public void printLevel_UP(Pokémon mon) {
             addString(String.format(LEVEL_UP, mon, mon.getLevel()));
@@ -1259,6 +1259,10 @@ public class GameFrame extends JFrame{
 
         public void printSaveSuccess() {
             addString(SAVE_SUCCESS);
+        }
+
+        public void printNotYetImplemented() {
+            addString(NOT_YET_IMPLEMENTED);
         }
     }
 

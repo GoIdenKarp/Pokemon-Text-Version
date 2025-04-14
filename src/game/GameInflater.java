@@ -3,6 +3,7 @@ package game;
 import areas.Area;
 import areas.ItemBall;
 import enums.MoveRequirement;
+import enums.Owner;
 import enums.Species;
 import events.*;
 import exceptions.BadNameException;
@@ -14,82 +15,54 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import pokémon.Pokémon;
+import pokémon.PokémonFactory;
 import trainer.PartySlot;
 import trainer.Trainer;
 import ui.GameFrame;
-
+import util.Keys;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
 public class GameInflater {
 
-    private final static String NO_JAR_MODE_PREFIX = "bin/";
-    private final static String NAME_KEY = "name";
-    private final static String ITEMS_KEY = "items";
-    private final static String ITEM_KEY = "item";
-    private final static String REQUIREMENT_KEY = "requirement";
-    private final static String EVENTS_KEY = "events";
-    private final static String START_FLAG_KEY = "startFlag";
-    private final static String MOVEMENT_FLAGS_KEY = "movementFlags";
-    private final static String EVENT_FLAGS_KEY = "eventFlags";
-    private final static String SUB_EVENTS_KEY = "subEvents";
-    private final static String TYPE_KEY = "type";
-    private final static String PROMPT_KEY = "prompt";
-    private final static String LEVEL_KEY = "level";
-    private final static String BEFORE_KEY = "before";
-    private final static String AFTER_KEY = "after";
-    private final static String INTRO_KEY = "intro";
-    private final static String WIN_MSG_KEY = "winMsg";
-    private final static String LOSE_MSG_KEY = "loseMsg";
-    private final static String MONEY_KEY = "money";
-    private final static String PARTIES_KEY = "parties";
-    private final static String AMOUNT_KEY = "amount";
-    private final static String SPECIES_KEY = "species";
-    private static final String GREETING_KEY = "greeting";
-    private static final String PARTY_KEY = "party";
-    private static final String DOUBLE_KEY = "double";
-    private static final String MOVESET_KEY = "moveset";
-    private static final String BADGES_KEY = "badges";
-    private static final String RIVAL_KEY = "rival";
-    private static final String OPTIONS_KEY = "options";
-    private static final String PC_KEY = "pc";
-    private static final String BAG_KEY = "bag";
-    private static final String PROLOGUE_KEY = "prologue";
-    private final static String POKÉMON_CHOICE_EVENT = "PokémonChoice";
-    private final static String POKÉMON_EVENT = "Pokémon";
-    private final static String RIVAL_BATTLE_EVENT = "RivalBattle";
-    private final static String ITEM_EVENT = "Item";
-    private final static String TRAINER_EVENT = "Trainer";
-    private final static String WILD_EVENT = "Wild";
+
 
     private static final Base64.Decoder DECODER = Base64.getDecoder();
     private static final JSONParser PARSER = new JSONParser();
+    private final static String PALLET_TOWN = "Pallet Town";
 
 
     public static Game inflateRegion(List<Area> gameMap, String gameFile, boolean newGame,
                                      boolean JAR_MODE, GameFrame gameFrame) throws IOException, BadNameException {
-        String prefix = (JAR_MODE) ? "" : NO_JAR_MODE_PREFIX;
+        String prefix = (JAR_MODE) ? "" : Keys.NO_JAR_MODE_PREFIX;
         String filePath = prefix + gameFile;
+        System.out.println("FOO filePath: " + filePath);
         try (Scanner scanner = new Scanner(new File(filePath)).useDelimiter("\\Z")) {
+            PokémonFactory factory = new PokémonFactory(gameFrame.getInputHelper(), gameFrame.getGamePrinter());
             String saveData = scanner.next();
             String decodedSave = new String(DECODER.decode(saveData));
             JSONObject saveObj = (JSONObject) PARSER.parse(decodedSave);
+            System.out.println("FOO saveObj: " + saveObj);
             //If we are a new game, we create the player later
             Player player = null;
+            String currentArea = PALLET_TOWN;
             //If we are not a new game, we never need the prologue
             List<String> prologue = null;
             if (newGame) {
-                JSONArray prologueObj = (JSONArray) saveObj.get(PROLOGUE_KEY);
+                JSONArray prologueObj = (JSONArray) saveObj.get(Keys.PROLOGUE_KEY);
                 prologue = new ArrayList<>(prologueObj);
             } else {
-                JSONObject playerObj = (JSONObject) saveObj.get("player");
-                player = parsePlayer(playerObj);
+                JSONObject playerObj = (JSONObject) saveObj.get(Keys.PLAYER_KEY);
+                player = parsePlayer(playerObj, factory);
+                currentArea = (String) playerObj.get(Keys.CURR_AREA_KEY);
             }
-            JSONObject areasObj = (JSONObject) saveObj.get("areas");
+            JSONObject areasObj = (JSONObject) saveObj.get(Keys.AREAS_KEY);
             inflateAreas(gameMap, areasObj);
             //When parsing areas, I need to check for an "items" key, and if it doesn't exist pass in an empty list for items
-            return new Game(gameFrame, gameMap, player, prologue);
+            Game game = new Game(gameFrame, gameMap, player, prologue, currentArea);
+
+            return game;
         } catch (ParseException e) {
             e.printStackTrace();
             System.err.println("Parse exception: " + e.getMessage());
@@ -100,8 +73,10 @@ public class GameInflater {
     private static void inflateAreas(List<Area> gameMap, JSONObject areasObj) throws BadNameException {
         for (Object obj : areasObj.keySet()) {
             JSONObject areaObj = (JSONObject) areasObj.get(obj);
-            String name = (String) areaObj.get(NAME_KEY);
+            String name = (String) areaObj.get(Keys.NAME_KEY);
             Area toInflate = null;
+            System.out.println("FOO looking to inflate: " + name);
+            System.out.println("FOO gameMap: " + gameMap);
             for (Area area : gameMap) {
                 if (name.equals(area.getName())) {
                     toInflate = area;
@@ -117,12 +92,12 @@ public class GameInflater {
     }
 
     private static void inflateArea(Area area, JSONObject areaObj) throws BadNameException {
-        if (areaObj.containsKey(ITEMS_KEY)) {
-            JSONArray items = (JSONArray) areaObj.get(ITEMS_KEY);
+        if (areaObj.containsKey(Keys.ITEMS_KEY)) {
+            JSONArray items = (JSONArray) areaObj.get(Keys.ITEMS_KEY);
             parseItems(area, items);
         }
-        if (areaObj.containsKey(EVENTS_KEY)) {
-            JSONArray events = (JSONArray) areaObj.get(EVENTS_KEY);
+        if (areaObj.containsKey(Keys.EVENTS_KEY)) {
+            JSONArray events = (JSONArray) areaObj.get(Keys.EVENTS_KEY);
             parseEvents(area, events);
         }
     }
@@ -132,15 +107,15 @@ public class GameInflater {
         for (Object obj : events) {
             JSONObject eventObj = (JSONObject) obj;
             GameEventBuilder builder = new GameEventBuilder();
-            String startFlag = (String) eventObj.get(START_FLAG_KEY);
+            String startFlag = (String) eventObj.get(Keys.START_FLAG_KEY);
             builder.addStartFlag(startFlag);
-            if (eventObj.containsKey(EVENT_FLAGS_KEY)) {
-                JSONArray eventFlagsArray = (JSONArray) eventObj.get(EVENT_FLAGS_KEY);
+            if (eventObj.containsKey(Keys.EVENT_FLAGS_KEY)) {
+                JSONArray eventFlagsArray = (JSONArray) eventObj.get(Keys.EVENT_FLAGS_KEY);
                 List<String> eventFlags = new ArrayList<String>(eventFlagsArray);
                 builder.addEventFlags(eventFlags);
             }
-            if (eventObj.containsKey(MOVEMENT_FLAGS_KEY)) {
-                JSONArray movementFlagsArray = (JSONArray) eventObj.get(MOVEMENT_FLAGS_KEY);
+            if (eventObj.containsKey(Keys.MOVEMENT_FLAGS_KEY)) {
+                JSONArray movementFlagsArray = (JSONArray) eventObj.get(Keys.MOVEMENT_FLAGS_KEY);
                 List<MovementFlag> movementFlagList = new ArrayList<>();
                 for (Object flagObj : movementFlagsArray) {
                     List<String> movementFlag = (List<String>) flagObj;
@@ -149,9 +124,13 @@ public class GameInflater {
                 }
                 builder.addMovementFlags(movementFlagList);
             }
-            JSONArray subEventsArray = (JSONArray) eventObj.get(SUB_EVENTS_KEY);
+            JSONArray subEventsArray = (JSONArray) eventObj.get(Keys.SUB_EVENTS_KEY);
             LinkedList<SubEvent> subEvents = parseSubEvents(subEventsArray);
             builder.addSubEvents(subEvents);
+            boolean resetOnFail = (boolean) eventObj.getOrDefault(Keys.RESET_ON_FAIL_KEY, true);
+            boolean ignoreFail = (boolean) eventObj.getOrDefault(Keys.IGNORE_FAIL_KEY, false);
+            builder.addResetOnFail(resetOnFail);
+            builder.addIgnoreFail(ignoreFail);
             gameEvents.add(builder.build());
         }
         area.setEvents(gameEvents);
@@ -162,17 +141,18 @@ public class GameInflater {
         LinkedList<SubEvent> subEvents = new LinkedList<>();
         for (Object obj : subEventsArray) {
             JSONObject subEventObj = (JSONObject) obj;
-            String type = (String) subEventObj.get(TYPE_KEY);;
+            System.out.println("FOO subEventObj: " + subEventObj);
+            String type = (String) subEventObj.get(Keys.TYPE_KEY);;
             SubEvent subEvent;
-            if (type.equals(POKÉMON_EVENT)) {
+            if (type.equals(Keys.POKÉMON_EVENT)) {
                 subEvent = parsePokémonEvent(subEventObj);
-            } else if (type.equals(POKÉMON_CHOICE_EVENT)) {
+            } else if (type.equals(Keys.POKÉMON_CHOICE_EVENT)) {
                 subEvent = parsePokémonChoiceEvent(subEventObj);
-            } else if (type.equals(RIVAL_BATTLE_EVENT)) {
+            } else if (type.equals(Keys.RIVAL_BATTLE_EVENT)) {
                 subEvent = parseRivalBattleEvent(subEventObj);
-            } else if (type.equals(TRAINER_EVENT)) {
+            } else if (type.equals(Keys.TRAINER_EVENT)) {
                 subEvent = parseTrainerEvent(subEventObj);
-            } else if (type.equals(ITEM_EVENT)) {
+            } else if (type.equals(Keys.ITEM_EVENT)) {
                 subEvent = parseItemEvent(subEventObj);
             } else {
                 subEvent = parseWildEvent(subEventObj);
@@ -184,15 +164,15 @@ public class GameInflater {
 
     private static SubEvent parsePokémonEvent(JSONObject eventObj) throws BadNameException {
 
-        JSONArray beforeArray = (JSONArray) eventObj.get(BEFORE_KEY);
+        JSONArray beforeArray = (JSONArray) eventObj.get(Keys.BEFORE_KEY);
         List<String> before = new ArrayList<>(beforeArray);
-        JSONArray afterArray = (JSONArray) eventObj.get(AFTER_KEY);
+        JSONArray afterArray = (JSONArray) eventObj.get(Keys.AFTER_KEY);
         List<String> after = new ArrayList<>(afterArray);
-        String speciesString = (String) eventObj.get(SPECIES_KEY);
+        String speciesString = (String) eventObj.get(Keys.SPECIES_KEY);
         Species species = Species.map(speciesString);
-        int level = ((Long) eventObj.get(LEVEL_KEY)).intValue();
-        if (eventObj.containsKey(ITEM_KEY)) {
-            String itemString = (String) eventObj.get(ITEM_KEY);
+        int level = ((Long) eventObj.get(Keys.LEVEL_KEY)).intValue();
+        if (eventObj.containsKey(Keys.ITEM_KEY)) {
+            String itemString = (String) eventObj.get(Keys.ITEM_KEY);
             Item item = ItemMapper.map(itemString);
             return new PokémonEvent(species, level, item, before, after);
         }
@@ -200,33 +180,33 @@ public class GameInflater {
     }
 
     private static SubEvent parsePokémonChoiceEvent(JSONObject eventObj) throws BadNameException {
-        String prompt = (String) eventObj.get(PROMPT_KEY);
-        int level = ((Long) eventObj.get(LEVEL_KEY)).intValue();
-        JSONArray optionsArray = (JSONArray) eventObj.get(OPTIONS_KEY);
+        String prompt = (String) eventObj.get(Keys.PROMPT_KEY);
+        int level = ((Long) eventObj.get(Keys.LEVEL_KEY)).intValue();
+        JSONArray optionsArray = (JSONArray) eventObj.get(Keys.OPTIONS_KEY);
         List<Species> options = new ArrayList<>();
         for (Object obj : optionsArray) {
             String speciesString = (String) obj;
             Species species = Species.map(speciesString);
             options.add(species);
         }
-        JSONArray beforeArray = (JSONArray) eventObj.get(BEFORE_KEY);
+        JSONArray beforeArray = (JSONArray) eventObj.get(Keys.BEFORE_KEY);
         List<String> before = new ArrayList<>(beforeArray);
-        JSONArray afterArray = (JSONArray) eventObj.get(AFTER_KEY);
+        JSONArray afterArray = (JSONArray) eventObj.get(Keys.AFTER_KEY);
         List<String> after = new ArrayList<>(afterArray);
         return new PokémonChoiceEvent(prompt, options, level, before, after);
     }
 
     private static SubEvent parseRivalBattleEvent(JSONObject eventObj) throws BadNameException {
-        JSONArray beforeArray = (JSONArray) eventObj.get(BEFORE_KEY);
+        JSONArray beforeArray = (JSONArray) eventObj.get(Keys.BEFORE_KEY);
         List<String> before = new ArrayList<>(beforeArray);
-        JSONArray afterArray = (JSONArray) eventObj.get(AFTER_KEY);
+        JSONArray afterArray = (JSONArray) eventObj.get(Keys.AFTER_KEY);
         List<String> after = new ArrayList<>(afterArray);
-        String intro = (String) eventObj.get(INTRO_KEY);
-        String winMsg = (String) eventObj.get(WIN_MSG_KEY);
-        String loseMSg = (String) eventObj.get(LOSE_MSG_KEY);
-        int money = ((Long) eventObj.get(MONEY_KEY)).intValue();
+        String intro = (String) eventObj.get(Keys.INTRO_KEY);
+        String winMsg = (String) eventObj.get(Keys.WIN_MSG_KEY);
+        String loseMSg = (String) eventObj.get(Keys.LOSE_MSG_KEY);
+        int money = ((Long) eventObj.get(Keys.MONEY_KEY)).intValue();
         List<List<PartySlot>> potentialParties = new ArrayList<>();
-        JSONArray jsonParties = (JSONArray) eventObj.get(PARTIES_KEY);
+        JSONArray jsonParties = (JSONArray) eventObj.get(Keys.PARTIES_KEY);
         for (Object partyObj : jsonParties) {
             JSONArray jsonParty = (JSONArray) partyObj;
             List<PartySlot> party = parseParty(jsonParty);
@@ -236,19 +216,19 @@ public class GameInflater {
     }
 
     private static SubEvent parseTrainerEvent(JSONObject eventObj) throws BadNameException {
-        JSONArray beforeArray = (JSONArray) eventObj.get(BEFORE_KEY);
+        JSONArray beforeArray = (JSONArray) eventObj.get(Keys.BEFORE_KEY);
         List<String> before = new ArrayList<>(beforeArray);
-        JSONArray afterArray = (JSONArray) eventObj.get(AFTER_KEY);
+        JSONArray afterArray = (JSONArray) eventObj.get(Keys.AFTER_KEY);
         List<String> after = new ArrayList<>(afterArray);
-        String type = (String) eventObj.get(TYPE_KEY);
-        String name = (String) eventObj.get(NAME_KEY);
-        int money = ((Long) eventObj.get(MONEY_KEY)).intValue();
-        String winMsg = (String) eventObj.get(WIN_MSG_KEY);
-        String loseMsg = (String) eventObj.get(LOSE_MSG_KEY);
-        String greeting = (String) eventObj.get(GREETING_KEY);
-        JSONArray partySlotsArray = (JSONArray) eventObj.get(PARTY_KEY);
+        String type = (String) eventObj.get(Keys.TYPE_KEY);
+        String name = (String) eventObj.get(Keys.NAME_KEY);
+        int money = ((Long) eventObj.get(Keys.MONEY_KEY)).intValue();
+        String winMsg = (String) eventObj.get(Keys.WIN_MSG_KEY);
+        String loseMsg = (String) eventObj.get(Keys.LOSE_MSG_KEY);
+        String greeting = (String) eventObj.get(Keys.GREETING_KEY);
+        JSONArray partySlotsArray = (JSONArray) eventObj.get(Keys.PARTY_KEY);
         List<PartySlot> partySlots = parseParty(partySlotsArray);
-        boolean isDoubleBattle = (boolean) eventObj.get(DOUBLE_KEY);
+        boolean isDoubleBattle = (boolean) eventObj.get(Keys.DOUBLE_KEY);
         Trainer trainer = new Trainer(type, name, greeting, winMsg, loseMsg, money, isDoubleBattle, partySlots);
         return new TrainerEvent(trainer, before, after);
     }
@@ -257,16 +237,16 @@ public class GameInflater {
         List<PartySlot> toReturn = new ArrayList<>();
         for (Object obj : partySlotsArray) {
             JSONObject slotObj = (JSONObject) obj;
-            String speciesString = (String) slotObj.get(SPECIES_KEY);
+            String speciesString = (String) slotObj.get(Keys.SPECIES_KEY);
             Species species = Species.map(speciesString);
-            int level = ((Long) slotObj.get(LEVEL_KEY)).intValue();
+            int level = ((Long) slotObj.get(Keys.LEVEL_KEY)).intValue();
             PartySlot slot = new PartySlot(species, level);
-            if (slotObj.containsKey(ITEM_KEY)) {
-                String itemString = (String) slotObj.get(ITEM_KEY);
+            if (slotObj.containsKey(Keys.ITEM_KEY)) {
+                String itemString = (String) slotObj.get(Keys.ITEM_KEY);
                 Item item = ItemMapper.map(itemString);
                 slot.setItem(item);
             }
-            if (slotObj.containsKey(MOVESET_KEY)) {
+            if (slotObj.containsKey(Keys.MOVESET_KEY)) {
                 //TODO
             }
             toReturn.add(slot);
@@ -275,26 +255,26 @@ public class GameInflater {
     }
 
     private static SubEvent parseItemEvent(JSONObject eventObj) throws BadNameException {
-        JSONArray beforeArray = (JSONArray) eventObj.get(BEFORE_KEY);
+        JSONArray beforeArray = (JSONArray) eventObj.get(Keys.BEFORE_KEY);
         List<String> before = new ArrayList<>(beforeArray);
-        JSONArray afterArray = (JSONArray) eventObj.get(AFTER_KEY);
+        JSONArray afterArray = (JSONArray) eventObj.get(Keys.AFTER_KEY);
         List<String> after = new ArrayList<>(afterArray);
-        String itemString = (String) eventObj.get(ITEM_KEY);
+        String itemString = (String) eventObj.get(Keys.ITEM_KEY);
         Item item = ItemMapper.map(itemString);
-        int amount = ((Long) eventObj.get(AMOUNT_KEY)).intValue();
+        int amount = ((Long) eventObj.get(Keys.AMOUNT_KEY)).intValue();
         return new ItemEvent(item, amount, before, after);
     }
 
     private static SubEvent parseWildEvent(JSONObject eventObj) throws BadNameException {
-        JSONArray beforeArray = (JSONArray) eventObj.get(BEFORE_KEY);
+        JSONArray beforeArray = (JSONArray) eventObj.get(Keys.BEFORE_KEY);
         List<String> before = new ArrayList<>(beforeArray);
-        JSONArray afterArray = (JSONArray) eventObj.get(AFTER_KEY);
+        JSONArray afterArray = (JSONArray) eventObj.get(Keys.AFTER_KEY);
         List<String> after = new ArrayList<>(afterArray);
-        String speciesString = (String) eventObj.get(SPECIES_KEY);
+        String speciesString = (String) eventObj.get(Keys.SPECIES_KEY);
         Species species = Species.map(speciesString);
-        int level = ((Long) eventObj.get(LEVEL_KEY)).intValue();
-        if (eventObj.containsKey(ITEM_KEY)) {
-            String itemString = (String) eventObj.get(ITEM_KEY);
+        int level = ((Long) eventObj.get(Keys.LEVEL_KEY)).intValue();
+        if (eventObj.containsKey(Keys.ITEM_KEY)) {
+            String itemString = (String) eventObj.get(Keys.ITEM_KEY);
             Item item = ItemMapper.map(itemString);
             return new WildEvent(species, level, item, before, after);
         }
@@ -305,37 +285,50 @@ public class GameInflater {
         List<ItemBall> itemBalls = new ArrayList<>();
         for (Object obj : items) {
             JSONObject itemObj = (JSONObject) obj;
-            Item item = ItemMapper.map((String) itemObj.get(ITEM_KEY));
-            MoveRequirement moveRequirement = MoveRequirement.map((String) itemObj.get(REQUIREMENT_KEY));
+            Item item = ItemMapper.map((String) itemObj.get(Keys.ITEM_KEY));
+            MoveRequirement moveRequirement = MoveRequirement.map((String) itemObj.get(Keys.REQUIREMENT_KEY));
             ItemBall itemBall = new ItemBall(item, moveRequirement);
             itemBalls.add(itemBall);
         }
         area.setItems(itemBalls);
     }
 
-    private static Player parsePlayer(JSONObject playerObj) throws BadNameException {
-        String name = (String) playerObj.get(NAME_KEY);
-        String rival = (String) playerObj.get(RIVAL_KEY);
-        JSONArray badgeArray = (JSONArray) playerObj.get(BADGES_KEY);
+    private static Player parsePlayer(JSONObject playerObj, PokémonFactory factory) throws BadNameException {
+        String name = (String) playerObj.get(Keys.NAME_KEY);
+        String rival = (String) playerObj.get(Keys.RIVAL_KEY);
+        JSONArray badgeArray = (JSONArray) playerObj.get(Keys.BADGES_KEY);
         ArrayList<String> badges = new ArrayList<>(badgeArray);
         Bag bag = new Bag();
-        JSONArray bagJSON = (JSONArray) playerObj.get(BAG_KEY);
+        JSONArray bagJSON = (JSONArray) playerObj.get(Keys.BAG_KEY);
         for (Object object : bagJSON) {
             JSONObject jsonItem = (JSONObject) object;
-            Item item = ItemMapper.map((String) jsonItem.get(ITEM_KEY));
-            int amount = ((Long) jsonItem.get(AMOUNT_KEY)).intValue();
+            Item item = ItemMapper.map((String) jsonItem.get(Keys.ITEM_KEY));
+            int amount = ((Long) jsonItem.get(Keys.AMOUNT_KEY)).intValue();
             bag.addItem(item, amount);
         }
-        JSONArray partyArray = (JSONArray) playerObj.get(PARTY_KEY);
-        ArrayList<Pokémon> party = parseRichMonList(partyArray);
-        JSONArray pcArray = (JSONArray) playerObj.get(PC_KEY);
-        ArrayList<Pokémon> pc = parseRichMonList(pcArray);
-        int money = ((Long) playerObj.get(MONEY_KEY)).intValue();
+        JSONArray partyArray = (JSONArray) playerObj.get(Keys.PARTY_KEY);
+        ArrayList<Pokémon> party = parseRichMonList(partyArray, factory);
+        JSONArray pcArray = (JSONArray) playerObj.get(Keys.PC_KEY);
+        ArrayList<Pokémon> pc = parseRichMonList(pcArray, factory);
+        int money = ((Long) playerObj.get(Keys.MONEY_KEY)).intValue();
         return new Player(name, rival, money, badges, party, pc, bag);
     }
 
     private static ArrayList<Pokémon> parseRichMonList(JSONArray partyArray) {
-        //TODO
-        return null;
+        ArrayList<Pokémon> toReturn = new ArrayList<>();
+        for (Object obj : partyArray) {
+            JSONObject monObj = (JSONObject) obj;
+            Pokémon mon = parseRichMon(monObj);
+            toReturn.add(mon);
+        }
+        return toReturn;
+    }
+
+    private static Pokémon parseRichMon(JSONObject monObj, PokémonFactory factory) throws BadNameException {
+        String speciesString = (String) monObj.get(Keys.SPECIES_KEY);
+        Species species = Species.map(speciesString);
+        String name = (String) monObj.get(Keys.NAME_KEY);
+        int level = ((Long) monObj.get(Keys.LEVEL_KEY)).intValue();
+        return factory.makePokémon(species, level, Owner.PLAYER);
     }
 }

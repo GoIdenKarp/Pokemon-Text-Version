@@ -65,7 +65,7 @@ public class Game {
     private int starterChoice = -1;
     private List<String> prologue;
 
-    public Game(GameFrame gameFrame, List<Area> areaList, Player player, List<String> prologue) {
+    public Game(GameFrame gameFrame, List<Area> areaList, Player player, List<String> prologue, String startingArea) {
         this.gameFrame = gameFrame;
         factory = new PokémonFactory(gameFrame.getInputHelper(), gameFrame.getGamePrinter());
         this.areaList = areaList;
@@ -75,6 +75,8 @@ public class Game {
         this.player = player;
         eventFlags  = new HashSet<>(Collections.singleton(""));
         this.prologue = prologue;
+        currentArea = areaList.stream().filter(area -> area.getName().equals(startingArea)).findFirst().orElse(areaList.get(0));
+
     }
 
     private void makeWorldMap() {
@@ -179,7 +181,9 @@ public class Game {
                 break;
             case SAVE_AREA_OPTION:
                 saveGame();
+                break;
             default:
+                gameFrame.getGamePrinter().printNotYetImplemented();
                 break;
         }
     }
@@ -242,6 +246,9 @@ public class Game {
                     //TODO: how can i implement repeatable events?
                     currentArea.getEvents().remove(0);
                 }
+            } else if (event.ignoreFail()) {
+                setFlags(event);
+                currentArea.getEvents().remove(0);
             } else {
                 if (event.resetOnFail()) {
                     event.reset();
@@ -524,9 +531,13 @@ public class Game {
     }
 
 
-    public void startNew(String startingArea) {
+    public void start() {
+        run();
+    }
+
+
+    public void startNew() {
         //eventually have something here different when we run a real new game; this is just for testing
-        currentArea = areaList.stream().filter(area -> area.getName().equals(startingArea)).findFirst().orElse(areaList.get(0));
         lastHealingArea = currentArea;
         flyOptions.add(currentArea);
         runPrologue();

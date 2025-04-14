@@ -11,7 +11,6 @@ public class ItemMapper {
      * @throws exceptions.BadNameException If I put a bad String that isn't the name of an item anywhere
      */
     public static Item map(String toMap) throws BadNameException {
-        System.out.println("Mapping " + toMap);
         switch(toMap) {
             case "POKEBALL":
                 return new PokéBall();

@@ -16,69 +16,70 @@ public enum Species {
 
     public static Species map(String speciesName) throws BadNameException {
         switch (speciesName) {
-            case "Bulbasaur":
+            case "BULBASAUR":
                 return BULBASAUR;
-            case "Ivysaur":
+            case "IVYSAUR":
                 return IVYSAUR;
-            case "Venusaur":
+            case "VENUSAUR":
                 return VENUSAUR;
-            case "Charmander":
+            case "CHARMANDER":
                 return CHARMANDER;
-            case "Charmeleon":
+            case "CHARMELEON":
                 return CHARMELEON;
-            case "Charizard":
+            case "CHARIZARD":
                 return CHARIZARD;
-            case "Squirtle":
+            case "SQUIRTLE":
                 return SQUIRTLE;
-            case "Wartortle":
+            case "WARTORTLE":
                 return WARTORTLE;
-            case "Blastoise":
+            case "BLASTOISE":
                 return BLASTOISE;
-            case "Caterpie":
+            case "CATERPIE":
                 return CATERPIE;
-            case "Metapod":
+            case "METAPOD":
                 return METAPOD;
-            case "Butterfree":
+            case "BUTTERFREE":
                 return BUTTERFREE;
-            case "Weedle":
+            case "WEEDLE":
                 return WEEDLE;
-            case "Kakuna":
+            case "KAKUNA":
                 return KAKUNA;
-            case "Beedrill":
+            case "BEEDRILL":
                 return BEEDRILL;
-            case "Pidgey":
+            case "PIDGEY":
                 return PIDGEY;
-            case "Pidgeotto":
+            case "PIDGEOTTO":
                 return PIDGEOTTO;
-            case "Pidgeot":
+            case "PIDGEOT":
                 return PIDGEOT;
-            case "Rattata":
+            case "RATTATA":
                 return RATTATA;
-            case "Raticate":
+            case "RATICATE":
                 return RATICATE;
-            case "Spearow":
+            case "SPEAROW":
                 return SPEAROW;
-            case "Fearow":
+            case "FEAROW":
                 return FEAROW;
-            case "Ekans":
+            case "EKANS":
                 return EKANS;
-            case "Arbok":
+            case "ARBOK":
                 return ARBOK;
-            case "Pikachu":
+            case "PIKACHU":
                 return PIKACHU;
-            case "Raichu":
+            case "RAICHU":
                 return RAICHU;
-            case "Sandshrew":
+            case "SANDSHREW":
                 return SANDSHREW;
-            case "Sandslash":
+            case "SANDSLASH":
                 return SANDSLASH;
-            case "Mankey":
+            case "MANKEY":
                 return MANKEY;
-            case "Primeape":
+            case "PRIMEAPE":
                 return PRIMEAPE;
-            case "Vulpix":
+            case "VULPIX":
                 return VULPIX;
             default:
+                System.err.println("Species not found: " + speciesName);
                 throw new BadNameException(speciesName);
         }
     }
@@ -102,4 +103,5 @@ public enum Species {
         return ordinalMap.get((int) x);
 
     }
+
 }

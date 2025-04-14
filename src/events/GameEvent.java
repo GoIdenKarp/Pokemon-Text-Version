@@ -13,26 +13,29 @@ public class GameEvent {
     private List<MovementFlag> movementFlagsToLift;
     private List<String> eventFlagsToLift;
     private boolean resetOnFail;
+    private boolean ignoreFail;
     private String canStartFlag;
 
     public GameEvent(LinkedList<SubEvent> masterList, List<MovementFlag> movementFlagsToLift,
-                     List<String> eventFlagsToLift, String canStartFlag) {
+                     List<String> eventFlagsToLift, String canStartFlag, boolean resetOnFail, boolean ignoreFail) {
         this.masterList = masterList;
         this.runningEvent = masterList;
         this.movementFlagsToLift = movementFlagsToLift;
         this.eventFlagsToLift = eventFlagsToLift;
         this.canStartFlag = canStartFlag;
-        resetOnFail = true;
+        this.resetOnFail = resetOnFail;
+        this.ignoreFail = ignoreFail;
     }
 
     public GameEvent(LinkedList<SubEvent> masterList, List<MovementFlag> movementFlagsToLift,
-                     List<String> eventFlagsToLift) {
+                     List<String> eventFlagsToLift, boolean resetOnFail, boolean ignoreFail) {
         this.masterList = masterList;
         this.runningEvent = masterList;
         this.movementFlagsToLift = movementFlagsToLift;
         this.eventFlagsToLift = eventFlagsToLift;
         this.canStartFlag = null;
-        resetOnFail = true;
+        this.resetOnFail = resetOnFail;
+        this.ignoreFail = ignoreFail;
     }
 
 
@@ -71,6 +74,10 @@ public class GameEvent {
 
     public boolean resetOnFail() {
         return resetOnFail;
+    }
+
+    public boolean ignoreFail() {
+        return ignoreFail;
     }
 
     public List<MovementFlag> getMovementFlagsToLift() {

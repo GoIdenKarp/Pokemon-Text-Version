@@ -8,13 +8,13 @@ public enum MoveRequirement {
 
     public static MoveRequirement map(String toMap) {
         switch (toMap) {
-            case "Surf":
+            case "SURF":
                 return SURF;
-            case "Strength":
+            case "STRENGTH":
                 return STRENGTH;
-            case "RockSmash":
+            case "ROCK_SMASH":
                 return ROCK_SMASH;
-            case "Event":
+            case "EVENT":
                 return EVENT;
             default:
                 return NONE;
