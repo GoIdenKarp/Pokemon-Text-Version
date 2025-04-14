@@ -12,24 +12,51 @@ A text-based recreation of the classic Pokémon games, implemented in Java.
 
 ## Requirements
 
-- Java 8 or higher
+- Java 11 or higher
+- Maven 3.6 or higher
 
 ## Building and Running
 
-1. Clone the repository
-2. Open the project in your preferred Java IDE
-3. Build the project
-4. Run the `GameStarter` class to start the game
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/Pokemon-Text-Version.git
+   cd Pokemon-Text-Version
+   ```
+
+2. Build with Maven:
+   ```bash
+   mvn clean install
+   ```
+
+3. Run the game:
+   ```bash
+   mvn exec:java -Dexec.mainClass="game.GameStarter"
+   ```
 
 ## Project Structure
 
-- `src/` - Source code
-  - `battle/` - Battle system implementation
-  - `game/` - Core game mechanics
-  - `pokémon/` - Pokémon-related classes
-  - `moves/` - Move implementations
-  - `data/` - Game data files
-  - `util/` - Utility classes
+```
+src/
+├── main/
+│   ├── java/
+│   │   ├── actions/    - Game action implementations
+│   │   ├── areas/      - Game area implementations
+│   │   ├── battle/     - Battle system implementation
+│   │   ├── data/       - Data structures and models
+│   │   ├── enums/      - Enums for different game mechanics
+│   │   ├── events/     - Event system
+│   │   ├── exceptions/ - Custom exceptions
+│   │   ├── game/       - Infrastructure for actually running the game, loading/saving data
+│   │   ├── items/      - Item implementations
+│   │   ├── moves/      - Move implementations
+│   │   ├── pokémon/    - Pokémon-related classes
+│   │   ├── testing/    - Test utilities
+│   │   ├── trainer/    - Trainer-related implementations
+│   │   ├── ui/         - User interface components
+│   │   └── util/       - Utility classes
+│   └── resources/
+│       ├── data/       - Game data files
+```
 
 ## Legal Notice
 
