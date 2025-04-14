@@ -26,15 +26,17 @@ public class GameStarter {
 
     private final static boolean DEBUG_MODE = true;
     private final static boolean JAR_MODE = false;
-    private final static String KANTO_MAP = "Kanto.region";
-    private final static String KANTO_NEW_GAME = "data/Kanto.newgame";
+    private final static String KANTO_MAP = "src/main/resources/data/Kanto.region";
+    private final static String KANTO_NEW_GAME = "src/main/resources/data/Kanto.newgame";
 
     private final static String KANTO = "Kanto";
     private final static ArrayList<String> REGION_OPTIONS = new ArrayList<>(Arrays.asList(KANTO));
 
     private final static String BATTLE_MODE = "Quick Battle";
     private final static String ADVENTURE_MODE = "Adventure Mode";
-    private final static ArrayList<String> GAME_MODE_OPTIONS = new ArrayList<String>(Arrays.asList(ADVENTURE_MODE, BATTLE_MODE));
+    private final static String LOAD_MODE = "Load Game";
+    private final static String NEW_GAME_MODE = "New Game";
+    private final static ArrayList<String> GAME_MODE_OPTIONS = new ArrayList<String>(Arrays.asList(NEW_GAME_MODE, BATTLE_MODE));
 
 
     private GameFrame gameFrame;
@@ -47,13 +49,19 @@ public class GameStarter {
 
     public void startGame() {
 
+        List<String> saves = findSaves();
+        if (!saves.isEmpty()) {
+            GAME_MODE_OPTIONS.add(LOAD_MODE);
+        }
         String gameModeChoice = gameFrame.getInputHelper().getInputFromOptions(GAME_MODE_OPTIONS, "Game Mode Selection",
                 "Please select which game mode you would like to play:");
 
         if (gameModeChoice.equals(BATTLE_MODE)) {
             startBattleMode();
-        } else if (gameModeChoice.equals(ADVENTURE_MODE)) {
-            startAdventureMode();
+        } else if (gameModeChoice.equals(NEW_GAME_MODE)) {
+            startAdventureMode(true);
+        } else if (gameModeChoice.equals(LOAD_MODE)) {
+            startAdventureMode(false);
         }
     }
 
@@ -93,35 +101,50 @@ public class GameStarter {
         new BattleRedux(ari, testTrainer, Weather.NONE, gameFrame).battle();
     }
 
-    private void startAdventureMode() {
-        List<String> saves = findSaves();
-        if (saves.isEmpty()) {
-            String gameChoice = gameFrame.getInputHelper().getInputFromOptions(REGION_OPTIONS, "Game Selection",
-                    "Please select which region you would like to play:");
-            if (gameChoice.equals(KANTO)) {
-                startKanto(true, KANTO_NEW_GAME);
-            }
+    private void startAdventureMode(boolean newGame) {
+        if (newGame) {
+            startKanto(true, KANTO_NEW_GAME);
         } else {
+            List<String> saves = findSaves();
             String saveChoice = gameFrame.getInputHelper().getInputFromOptions(saves, "Game Selection",
                     "Please select which save you would like to load:");
             startKanto(false, saveChoice);
         }
+            // String gameChoice = gameFrame.getInputHelper().getInputFromOptions(REGION_OPTIONS, "Game Selection",
+            //         "Please select which region you would like to play:");
+            // if (gameChoice.equals(KANTO)) {
+
+            // }
     }
 
     private List<String> findSaves() {
-        File f = new File("./bin");
-        File[] matchingFiles = f.listFiles(new FilenameFilter() {
-            public boolean accept(File dir, String name) {
-                return name.endsWith(".ptvsav");
-            }
-        });
-        return Arrays.asList(matchingFiles).stream().map(File::getName).collect(Collectors.toList());
+        File savesDir = new File("src/main/resources/saves");
+        if (!savesDir.exists()) {
+            savesDir.mkdirs();
+            return new ArrayList<>();
+        }
+        
+        File[] matchingFiles = savesDir.listFiles((dir, name) -> name.endsWith(".ptvsav"));
+        
+        if (matchingFiles == null || matchingFiles.length == 0) {
+            return new ArrayList<>();
+        }
+        
+        return Arrays.stream(matchingFiles)
+                    .map(File::getName)
+                    .collect(Collectors.toList());
     }
 
     private void startKanto(boolean newgame, String saveName) {
+        String savePath = "";
+        if (newgame) {
+            savePath = saveName;
+        } else {
+            savePath = "src/main/resources/saves/" + saveName;
+        }
         try {
             ArrayList<Area> gameMap = Region.createRegion(KANTO_MAP, JAR_MODE);
-            Game game = GameInflater.inflateRegion(gameMap, saveName, newgame, JAR_MODE, gameFrame);
+            Game game = GameInflater.inflateRegion(gameMap, savePath, newgame, JAR_MODE, gameFrame);
             if (newgame) {
                 game.startNew();
             } else {

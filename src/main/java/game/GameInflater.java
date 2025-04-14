@@ -35,15 +35,13 @@ public class GameInflater {
 
     public static Game inflateRegion(List<Area> gameMap, String gameFile, boolean newGame,
                                      boolean JAR_MODE, GameFrame gameFrame) throws IOException, BadNameException {
-        String prefix = (JAR_MODE) ? "" : Keys.NO_JAR_MODE_PREFIX;
-        String filePath = prefix + gameFile;
-        System.out.println("FOO filePath: " + filePath);
+        String filePath = gameFile;
+        System.out.println("Loading game file: " + filePath);
         try (Scanner scanner = new Scanner(new File(filePath)).useDelimiter("\\Z")) {
             PokémonFactory factory = new PokémonFactory(gameFrame.getInputHelper(), gameFrame.getGamePrinter());
             String saveData = scanner.next();
             String decodedSave = new String(DECODER.decode(saveData));
             JSONObject saveObj = (JSONObject) PARSER.parse(decodedSave);
-            System.out.println("FOO saveObj: " + saveObj);
             //If we are a new game, we create the player later
             Player player = null;
             String currentArea = PALLET_TOWN;
@@ -75,8 +73,6 @@ public class GameInflater {
             JSONObject areaObj = (JSONObject) areasObj.get(obj);
             String name = (String) areaObj.get(Keys.NAME_KEY);
             Area toInflate = null;
-            System.out.println("FOO looking to inflate: " + name);
-            System.out.println("FOO gameMap: " + gameMap);
             for (Area area : gameMap) {
                 if (name.equals(area.getName())) {
                     toInflate = area;
@@ -141,7 +137,6 @@ public class GameInflater {
         LinkedList<SubEvent> subEvents = new LinkedList<>();
         for (Object obj : subEventsArray) {
             JSONObject subEventObj = (JSONObject) obj;
-            System.out.println("FOO subEventObj: " + subEventObj);
             String type = (String) subEventObj.get(Keys.TYPE_KEY);;
             SubEvent subEvent;
             if (type.equals(Keys.POKÉMON_EVENT)) {
@@ -314,11 +309,11 @@ public class GameInflater {
         return new Player(name, rival, money, badges, party, pc, bag);
     }
 
-    private static ArrayList<Pokémon> parseRichMonList(JSONArray partyArray) {
+    private static ArrayList<Pokémon> parseRichMonList(JSONArray partyArray, PokémonFactory factory) throws BadNameException {
         ArrayList<Pokémon> toReturn = new ArrayList<>();
         for (Object obj : partyArray) {
             JSONObject monObj = (JSONObject) obj;
-            Pokémon mon = parseRichMon(monObj);
+            Pokémon mon = parseRichMon(monObj, factory);
             toReturn.add(mon);
         }
         return toReturn;

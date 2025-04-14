@@ -194,9 +194,8 @@ public class BattleRedux implements Comparator<Action>{
         this.inputHelper = frame.getInputHelper();
         runAttempts = 0;
         //No wild double battles
-        this.playerSide = new Side(getFirstHealthyPokémon(player.getParty()), battlePrinter);
-        this.compSide = new Side(compParty, battlePrinter);
         this.isDoubleBattle = false;
+        setUpSides();
         this.battlePrinter.printWildBattleStart(playerSide.getSlots().get(0).getPokémon(), compSide.getSlots().get(0).getPokémon());
 
     }

@@ -77,8 +77,8 @@ public class JsonBase64Util {
     public static void main(String[] args) {
         try {
             // Example usage
-            String jsonPath = "src/json-data/Kanto.json";
-            String base64Path = "src/data/Kanto.region";
+            String jsonPath = "src/main/resources/json-data/Kanto_NewGame.json";
+            String base64Path = "src/main/resources/data/Kanto.newgame";
             
             // Encode JSON to Base64
             System.out.println("Encoding JSON to Base64...");

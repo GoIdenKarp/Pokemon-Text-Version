@@ -46,7 +46,7 @@ public class GameSaver {
     public static boolean save(Game game, String saveName) {
         String filename = saveName + FILETYPE;
         try {
-            PrintWriter writer = new PrintWriter("bin/" + filename);
+            PrintWriter writer = new PrintWriter("src/main/resources/saves/" + filename);
             JSONObject saveData = new JSONObject();
             saveData.put(Keys.PLAYER_KEY, writePlayer(game.getPlayer(), game.getCurrentArea()));
             saveData.put(Keys.AREAS_KEY, writeGameState(game));
@@ -58,7 +58,7 @@ public class GameSaver {
             writer.close();
 
 
-            PrintWriter jsonWriter = new PrintWriter("bin/" + saveName + JSON_EXTENSION);
+            PrintWriter jsonWriter = new PrintWriter("src/main/resources/saves/" + saveName + JSON_EXTENSION);
             jsonWriter.println(saveData.toJSONString());
             jsonWriter.flush();
             jsonWriter.close();

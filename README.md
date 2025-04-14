@@ -19,7 +19,7 @@ A text-based recreation of the classic Pokémon games, implemented in Java.
 1. Clone the repository
 2. Open the project in your preferred Java IDE
 3. Build the project
-4. Run the `PokéTest` class to start the game
+4. Run the `GameStarter` class to start the game
 
 ## Project Structure
 

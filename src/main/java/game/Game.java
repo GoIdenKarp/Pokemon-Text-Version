@@ -375,6 +375,7 @@ public class Game {
     }
 
     private void switchAreas() {
+        System.out.println("Switching areas, permissions: " + currentArea.getMovePermissions() );
         List<String> switchable = new ArrayList<>();
         for (Area area : currentArea.getConnections()) {
             switchable.add(area.getName());

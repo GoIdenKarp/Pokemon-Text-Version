@@ -56,4 +56,15 @@ public class Keys {
     public final static String CAN_START_KEY = "canStart";
     public final static String AREAS_KEY = "areas";
     public final static String CURR_AREA_KEY = "currArea";
+    public final static String CONNECTIONS_KEY = "connections";
+    public final static String TALK_KEY = "talk";
+    public final static String GRASS_KEY = "grass";
+    public final static String SURF_KEY = "surf";
+    public final static String FISHING_KEY = "fishing";
+    public final static String MIN_KEY = "min";
+    public final static String MAX_KEY = "max";
+    public final static String RATE_KEY = "rate";
+    public final static String CHANCE_KEY = "chance";
+    public final static String FIRST_KEY = "first";
+    public final static String SECOND_KEY = "second";
 }

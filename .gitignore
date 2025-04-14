@@ -44,4 +44,5 @@ out/
 *.ptvsav 
 
 # Data files
-src/json-data/
+src/main/resources/json-data/
+src/main/resources/saves/
