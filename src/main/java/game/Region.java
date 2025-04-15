@@ -15,6 +15,8 @@ import org.json.simple.JSONObject;
 import util.JsonBase64Util;
 
 import java.util.*;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 
 public class Region {
 
@@ -26,19 +28,41 @@ public class Region {
 
     public static ArrayList<Area> createRegion(String filename, boolean JAR_MODE) {
         try {
-            String filePath = filename;
+            // Get the resource as a stream
+            InputStream inputStream = Region.class.getClassLoader().getResourceAsStream(filename);
+            if (inputStream == null) {
+                System.out.println("Resource not found. Available resources:");
+                try {
+                    java.net.URL url = Region.class.getClassLoader().getResource("data");
+                    if (url != null) {
+                        System.out.println("Found data directory at: " + url);
+                        java.io.File dataDir = new java.io.File(url.toURI());
+                        if (dataDir.exists() && dataDir.isDirectory()) {
+                            for (String file : dataDir.list()) {
+                                System.out.println("  - " + file);
+                            }
+                        }
+                    } else {
+                        System.out.println("data directory not found");
+                    }
+                } catch (Exception e) {
+                    System.out.println("Error checking resources: " + e.getMessage());
+                }
+                throw new FileNotFoundException("Resource not found: " + filename);
+            }
+                        
             // Use the new utility class to decode the region file
-            JSONObject regionObj = JsonBase64Util.decodeBase64FileToJson(filePath);
+            JSONObject regionObj = JsonBase64Util.decodeBase64StreamToJson(inputStream);
             JSONObject areasObj = (JSONObject) regionObj.get(Keys.AREAS_KEY);
             JSONArray connections = (JSONArray) regionObj.get(Keys.CONNECTIONS_KEY);
             ArrayList<Area> regionMap = parseAreas(areasObj);
             addConnections(regionMap, connections);
             return regionMap;
         } catch (Exception e) {
+            System.err.println("Error loading region: " + e.getMessage());
             e.printStackTrace();
+            throw new RuntimeException("Failed to load region: " + filename, e);
         }
-        return null;
-        //shouldn't happen
     }
 
     private static ArrayList<Area> parseAreas(JSONObject areasObj) throws BadNameException {

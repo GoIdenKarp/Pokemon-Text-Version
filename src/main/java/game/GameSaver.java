@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 
 import org.json.simple.JSONObject;
 import ui.GameFrame;
+import java.io.File;
 
 public class GameSaver {
 
@@ -36,6 +37,16 @@ public class GameSaver {
     public static final String JSON_EXTENSION = ".json";
 
     private static final Base64.Encoder encoder = Base64.getEncoder();
+    private static final String SAVE_DIR = System.getProperty("user.home") + "/.pokemon-text-version/saves/";
+
+    private static String getSaveFilePath(String filename) {
+        // Create save directory if it doesn't exist
+        File saveDir = new File(SAVE_DIR);
+        if (!saveDir.exists()) {
+            saveDir.mkdirs();
+        }
+        return SAVE_DIR + filename;
+    }
 
     /**
      * Converts the game state to an encoded string and writes it to a file
@@ -46,29 +57,31 @@ public class GameSaver {
     public static boolean save(Game game, String saveName) {
         String filename = saveName + FILETYPE;
         try {
-            PrintWriter writer = new PrintWriter("src/main/resources/saves/" + filename);
+            String savePath = getSaveFilePath(filename);
+            
+            PrintWriter writer = new PrintWriter(savePath);
             JSONObject saveData = new JSONObject();
             saveData.put(Keys.PLAYER_KEY, writePlayer(game.getPlayer(), game.getCurrentArea()));
             saveData.put(Keys.AREAS_KEY, writeGameState(game));
             
-
             String saveString = encode(saveData.toJSONString());
             writer.println(saveString);
             writer.flush();
             writer.close();
 
-
-            PrintWriter jsonWriter = new PrintWriter("src/main/resources/saves/" + saveName + JSON_EXTENSION);
+            // Also save a readable JSON version for debugging
+            String jsonPath = getSaveFilePath(saveName + JSON_EXTENSION);
+            PrintWriter jsonWriter = new PrintWriter(jsonPath);
             jsonWriter.println(saveData.toJSONString());
             jsonWriter.flush();
             jsonWriter.close();
 
+            return true;
         } catch (FileNotFoundException | BadNameException e) {
+            System.err.println("Error saving game: " + e.getMessage());
             e.printStackTrace();
             return false;
         }
-
-        return true;
     }
 
     private static JSONObject writeGameState(Game game) {
@@ -220,9 +233,9 @@ public class GameSaver {
         eventObj.put(Keys.LEVEL_KEY, event.getLevel());
         ArrayList<String> speciesList = new ArrayList<>();
         for (Species species : event.getSpecies()) {
-            speciesList.add("\"" + species.toString() + "\"");
+            speciesList.add(species.toString());
         }
-        eventObj.put(Keys.SPECIES_KEY, speciesList);
+        eventObj.put(Keys.OPTIONS_KEY, speciesList);
         eventObj.put(Keys.BEFORE_KEY, event.getBeforeMain());
         eventObj.put(Keys.AFTER_KEY, event.getAfterMain());
         return eventObj;
@@ -240,6 +253,7 @@ public class GameSaver {
         for (List<PartySlot> list : event.getPotentialParties()) {
             metaList.add(writeTrainerMonList(list));
         }
+        eventObj.put(Keys.PARTIES_KEY, metaList);
         return eventObj;
     }
 
@@ -301,7 +315,7 @@ public class GameSaver {
         JSONArray jsonList = new JSONArray();
         for (PartySlot slot : list) {
             JSONObject slotObj = new JSONObject();
-            slotObj.put(Keys.SPECIES_KEY, slot.getMon().ordinal());
+            slotObj.put(Keys.SPECIES_KEY, slot.getMon().toString());
             slotObj.put(Keys.LEVEL_KEY, slot.getLevel());
             if (slot.getItem() != null) {
                 slotObj.put(Keys.ITEM_KEY, slot.getItem().getName());

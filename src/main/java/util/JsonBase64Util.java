@@ -48,12 +48,40 @@ public class JsonBase64Util {
         // Read the Base64 file
         String base64Content = new String(Files.readAllBytes(Paths.get(base64FilePath)), StandardCharsets.UTF_8).trim();
         
-        // Decode Base64 to string
-        String jsonString = new String(DECODER.decode(base64Content), StandardCharsets.UTF_8);
+        // Decode from Base64
+        byte[] decodedBytes = DECODER.decode(base64Content);
+        String jsonContent = new String(decodedBytes, StandardCharsets.UTF_8);
         
         // Parse JSON
         JSONParser parser = new JSONParser();
-        return (JSONObject) parser.parse(jsonString);
+        return (JSONObject) parser.parse(jsonContent);
+    }
+
+    /**
+     * Decodes a Base64 encoded InputStream back to a JSON object
+     * @param inputStream InputStream containing Base64 encoded content
+     * @return Decoded JSONObject
+     * @throws IOException If there are issues reading the stream
+     * @throws ParseException If the decoded content is not valid JSON
+     */
+    public static JSONObject decodeBase64StreamToJson(InputStream inputStream) throws IOException, ParseException {
+        // Read the Base64 content from the stream
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        int nRead;
+        byte[] data = new byte[1024];
+        while ((nRead = inputStream.read(data, 0, data.length)) != -1) {
+            buffer.write(data, 0, nRead);
+        }
+        buffer.flush();
+        String base64Content = new String(buffer.toByteArray(), StandardCharsets.UTF_8).trim();
+        
+        // Decode from Base64
+        byte[] decodedBytes = DECODER.decode(base64Content);
+        String jsonContent = new String(decodedBytes, StandardCharsets.UTF_8);
+        
+        // Parse JSON
+        JSONParser parser = new JSONParser();
+        return (JSONObject) parser.parse(jsonContent);
     }
 
     /**

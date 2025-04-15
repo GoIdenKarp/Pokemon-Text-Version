@@ -26,11 +26,12 @@ public class GameStarter {
 
     private final static boolean DEBUG_MODE = true;
     private final static boolean JAR_MODE = false;
-    private final static String KANTO_MAP = "src/main/resources/data/Kanto.region";
-    private final static String KANTO_NEW_GAME = "src/main/resources/data/Kanto.newgame";
+    private final static String KANTO_MAP = "data/Kanto.region";
+    private final static String KANTO_NEW_GAME = "data/Kanto.newgame";
 
     private final static String KANTO = "Kanto";
     private final static ArrayList<String> REGION_OPTIONS = new ArrayList<>(Arrays.asList(KANTO));
+    private static final String SAVE_DIR = System.getProperty("user.home") + "/.pokemon-text-version/saves/";
 
     private final static String BATTLE_MODE = "Quick Battle";
     private final static String ADVENTURE_MODE = "Adventure Mode";
@@ -118,7 +119,7 @@ public class GameStarter {
     }
 
     private List<String> findSaves() {
-        File savesDir = new File("src/main/resources/saves");
+        File savesDir = new File(SAVE_DIR);
         if (!savesDir.exists()) {
             savesDir.mkdirs();
             return new ArrayList<>();
@@ -140,7 +141,7 @@ public class GameStarter {
         if (newgame) {
             savePath = saveName;
         } else {
-            savePath = "src/main/resources/saves/" + saveName;
+            savePath = saveName;
         }
         try {
             ArrayList<Area> gameMap = Region.createRegion(KANTO_MAP, JAR_MODE);

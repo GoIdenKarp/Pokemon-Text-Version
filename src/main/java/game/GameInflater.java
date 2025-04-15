@@ -21,51 +21,89 @@ import trainer.Trainer;
 import ui.GameFrame;
 import util.Keys;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.FileInputStream;
 import java.util.*;
 
 public class GameInflater {
 
-
-
     private static final Base64.Decoder DECODER = Base64.getDecoder();
     private static final JSONParser PARSER = new JSONParser();
     private final static String PALLET_TOWN = "Pallet Town";
+    private static final String SAVE_DIR = System.getProperty("user.home") + "/.pokemon-text-version/saves/";
 
+    private static String getSaveFilePath(String filename) {
+        // Create save directory if it doesn't exist
+        File saveDir = new File(SAVE_DIR);
+        if (!saveDir.exists()) {
+            saveDir.mkdirs();
+        }
+        return SAVE_DIR + filename;
+    }
 
     public static Game inflateRegion(List<Area> gameMap, String gameFile, boolean newGame,
                                      boolean JAR_MODE, GameFrame gameFrame) throws IOException, BadNameException {
-        String filePath = gameFile;
-        System.out.println("Loading game file: " + filePath);
-        try (Scanner scanner = new Scanner(new File(filePath)).useDelimiter("\\Z")) {
-            PokémonFactory factory = new PokémonFactory(gameFrame.getInputHelper(), gameFrame.getGamePrinter());
-            String saveData = scanner.next();
-            String decodedSave = new String(DECODER.decode(saveData));
-            JSONObject saveObj = (JSONObject) PARSER.parse(decodedSave);
-            //If we are a new game, we create the player later
-            Player player = null;
-            String currentArea = PALLET_TOWN;
-            //If we are not a new game, we never need the prologue
-            List<String> prologue = null;
+        System.out.println("Loading game file: " + gameFile);
+        try {
+            InputStream inputStream;
             if (newGame) {
-                JSONArray prologueObj = (JSONArray) saveObj.get(Keys.PROLOGUE_KEY);
-                prologue = new ArrayList<>(prologueObj);
+                // For new games, load from resources
+                inputStream = GameInflater.class.getClassLoader().getResourceAsStream(gameFile);
+                if (inputStream == null) {
+                    try {
+                        java.net.URL url = GameInflater.class.getClassLoader().getResource("data");
+                        if (url != null) {
+                            java.io.File dataDir = new java.io.File(url.toURI());
+                            if (dataDir.exists() && dataDir.isDirectory()) {
+                                for (String file : dataDir.list()) {
+                                    System.out.println("  - " + file);
+                                }
+                            }
+                        } else {
+                            System.out.println("data directory not found");
+                        }
+                    } catch (Exception e) {
+                        System.out.println("Error checking resources: " + e.getMessage());
+                    }
+                    throw new FileNotFoundException("Resource not found: " + gameFile);
+                }
             } else {
-                JSONObject playerObj = (JSONObject) saveObj.get(Keys.PLAYER_KEY);
-                player = parsePlayer(playerObj, factory);
-                currentArea = (String) playerObj.get(Keys.CURR_AREA_KEY);
+                // For saved games, load from save directory
+                String savePath = getSaveFilePath(gameFile);
+                inputStream = new FileInputStream(savePath);
             }
-            JSONObject areasObj = (JSONObject) saveObj.get(Keys.AREAS_KEY);
-            inflateAreas(gameMap, areasObj);
-            //When parsing areas, I need to check for an "items" key, and if it doesn't exist pass in an empty list for items
-            Game game = new Game(gameFrame, gameMap, player, prologue, currentArea);
-
-            return game;
+                        
+            try (Scanner scanner = new Scanner(inputStream).useDelimiter("\\Z")) {
+                PokémonFactory factory = new PokémonFactory(gameFrame.getInputHelper(), gameFrame.getGamePrinter());
+                String saveData = scanner.next();
+                String decodedSave = new String(DECODER.decode(saveData));
+                JSONObject saveObj = (JSONObject) PARSER.parse(decodedSave);
+                //If we are a new game, we create the player later
+                Player player = null;
+                String currentArea = PALLET_TOWN;
+                //If we are not a new game, we never need the prologue
+                List<String> prologue = null;
+                if (newGame) {
+                    JSONArray prologueObj = (JSONArray) saveObj.get(Keys.PROLOGUE_KEY);
+                    prologue = new ArrayList<>(prologueObj);
+                } else {
+                    JSONObject playerObj = (JSONObject) saveObj.get(Keys.PLAYER_KEY);
+                    player = parsePlayer(playerObj, factory);
+                    currentArea = (String) playerObj.get(Keys.CURR_AREA_KEY);
+                }
+                JSONObject areasObj = (JSONObject) saveObj.get(Keys.AREAS_KEY);
+                inflateAreas(gameMap, areasObj);
+                //When parsing areas, I need to check for an "items" key, and if it doesn't exist pass in an empty list for items
+                Game game = new Game(gameFrame, gameMap, player, prologue, currentArea);
+                return game;
+            }
         } catch (ParseException e) {
             e.printStackTrace();
             System.err.println("Parse exception: " + e.getMessage());
+            throw new RuntimeException("Failed to parse game file: " + gameFile, e);
         }
-        return null;
     }
 
     private static void inflateAreas(List<Area> gameMap, JSONObject areasObj) throws BadNameException {
