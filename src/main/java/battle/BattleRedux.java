@@ -2229,10 +2229,7 @@ public class BattleRedux implements Comparator<Action>{
         boolean isPlayer = party.get(0).getOwner() == Owner.PLAYER;
         Side side = (isPlayer) ? playerSide : compSide;
         boolean doubleBattle = side.getSlotTwo() != null;
-        System.out.println(doubleBattle);
         for (Pokémon mon : party) {
-            System.out.println(side.getSlotOne());
-            System.out.println(side.getSlotOne().getOriginal());
             if (side.getSlotOne().getOriginal().equals(mon) || (doubleBattle && side.getSlotTwo().getOriginal().equals(mon))) {
                 continue;
             } else if (mon.getStatus() != Status.FAINTED) {
