@@ -19,19 +19,30 @@ A text-based recreation of the classic Pokémon games, implemented in Java.
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/Pokemon-Text-Version.git
-   cd Pokemon-Text-Version
+   git clone https://github.com/yourusername/pokemon-text-version.git
+   cd pokemon-text-version
    ```
 
-2. Build with Maven:
-   ```bash
-   mvn clean install
-   ```
+2. Build the project:
+   - Using Maven:
+     ```bash
+     mvn clean install
+     ```
+   - Using Gradle:
+     ```bash
+     ./gradlew build
+     ```
+   - Using IDE:
+     - Import the project as a Maven/Gradle project
+     - Build using your IDE's build tools
 
 3. Run the game:
-   ```bash
-   mvn exec:java -Dexec.mainClass="game.GameStarter"
-   ```
+   - From command line:
+     ```bash
+     java -cp target/classes com.game.GameStarter
+     ```
+   - From IDE:
+     - Run the `GameStarter` class in `src/main/java/com/game/`
 
 ## Project Structure
 

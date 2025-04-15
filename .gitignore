@@ -46,3 +46,4 @@ out/
 # Data files
 src/main/resources/json-data/
 src/main/resources/saves/
+src/json-data/
