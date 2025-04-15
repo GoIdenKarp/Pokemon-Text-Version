@@ -1,6 +1,6 @@
 # Pokémon Text Version
 
-A text-based recreation of the classic Pokémon games, implemented in Java.
+A text-based recreation of the classic Pokémon games, implemented in Java. I started this project yars ago, and picked it back up recently to use as a code sample for my java work. I've made numerous improvements, and the game can now be started and played, though there isn't much content to get through. 
 
 ## Features
 
@@ -43,6 +43,11 @@ A text-based recreation of the classic Pokémon games, implemented in Java.
      ```
    - From IDE:
      - Run the `GameStarter` class in `src/main/java/com/game/`
+
+    - If you're using Maven, there is a built-in helper command. Run
+    ```bash
+    mvn exec: java
+    ```
 
 ## Project Structure
 
