@@ -72,12 +72,26 @@ public enum Species {
                 return SANDSHREW;
             case "SANDSLASH":
                 return SANDSLASH;
+            case "NIDORANF":
+                return NIDORANF;
+            case "NIDORINA":
+                return NIDORINA;
+            case "NIDOQUEEN":
+                return NIDOQUEEN;
+            case "NIDORANM":
+                return NIDORANM;
+            case "NIDORINO":
+                return NIDORINO;
+            case "NIDOKING":
+                return NIDOKING;
+            case "VULPIX":
+                return VULPIX;
+            case "NINETALES":
+                return NINETALES;
             case "MANKEY":
                 return MANKEY;
             case "PRIMEAPE":
                 return PRIMEAPE;
-            case "VULPIX":
-                return VULPIX;
             default:
                 System.err.println("Species not found: " + speciesName);
                 throw new BadNameException(speciesName);

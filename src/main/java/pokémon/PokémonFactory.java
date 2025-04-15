@@ -76,17 +76,28 @@ public class PokémonFactory {
                 return new Sandshrew(level, owner, inputHelper, gamePrinter);
             case SANDSLASH:
                 return new Sandslash(level, owner, inputHelper, gamePrinter);
+            case NIDORANF:
+                return new NidoranF(level, owner, inputHelper, gamePrinter);
+            case NIDORINA:
+                return new Nidorina(level, owner, inputHelper, gamePrinter);
+            case NIDOQUEEN:
+                return new Nidoqueen(level, owner, inputHelper, gamePrinter);
+            case NIDORANM:
+                return new NidoranM(level, owner, inputHelper, gamePrinter);
+            case NIDORINO:
+                return new Nidorino(level, owner, inputHelper, gamePrinter);
+            case NIDOKING:
+                return new Nidoking(level, owner, inputHelper, gamePrinter);
+            case VULPIX:
+                return new Vulpix(level, owner, inputHelper, gamePrinter);
+            case NINETALES:
+                return new Ninetales(level, owner, inputHelper, gamePrinter);
             case MANKEY:
                 return new Mankey(level, owner, inputHelper, gamePrinter);
             case PRIMEAPE:
                 return new Primeape(level, owner, inputHelper, gamePrinter);
-            case VULPIX:
-                return new Vulpix(level, owner, inputHelper, gamePrinter);
             default:
                 return new Pikachu(level, owner, inputHelper, gamePrinter);
         }
-
-
     }
-
 }

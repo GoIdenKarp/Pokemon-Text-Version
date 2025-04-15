@@ -18,20 +18,19 @@
                  -- partially fixed; will now fail if the target is not using an Attack, but will always succeed if they are
                  -- maybe assign each battle slot a turn number and see whose turn is first?
     -- awardEXP is a little wonky, but it should work for now
-        -- it also doesn't do EVs
 
 -- Saving and loading the game
-    -- How to handle Event MoveRequirements?
-        -- Maybe Region file includes flag to lift event, and can lift the event restriction
-            based on flags (which will have to be saved)
+    -- This works now!
     --rework generating regions
         -- Eventually Gyms are gonna have to be a thing
         -- I have no way of accounting for the different kinds of Fishing Rods
 
+-- Player should have a way to check their party
+
+-- Want to add up to Pewter City
+
 -- Player now has a field for a caught Pokémon
     -- check for this field to have a value after battle -> move to Game's PC field
-
--- Event text is jumbled on one line
 
 -- Infrastructure for mart is all set up, just need to actually write the code to buy and sell
 

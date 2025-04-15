@@ -107,16 +107,16 @@ public class Game {
     private void getAreaAction() {
         ArrayList<String> areaOptions = new ArrayList<>();
         areaOptions.add(MOVE_OPTION);
-        if (currentArea.getTrainers() != null) {
+        if (currentArea.getTrainers() != null && currentArea.getTrainers().size() > 0) {
             areaOptions.add(TRAINERS_OPTION);
         }
-        if (currentArea.getTallGrassSlots() != null) {
+        if (currentArea.getTallGrassSlots() != null && currentArea.getTallGrassSlots().size() > 0) {
             areaOptions.add(TALL_GRASS_OPTION);
         }
-        if (currentArea.getSurfSlots() != null) {
+        if (currentArea.getSurfSlots() != null && currentArea.getSurfSlots().size() > 0) {
             areaOptions.add(SURF_OPTION);
         }
-        if (currentArea.getFishingSlots() != null) {
+        if (currentArea.getFishingSlots() != null && currentArea.getFishingSlots().size() > 0) {
             areaOptions.add(FISHING_OPTION);
         }
         if (currentArea.getItems() != null) {
