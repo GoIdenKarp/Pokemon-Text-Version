@@ -38,3 +38,5 @@
 
 -- Note to self: Side was setting Slot's Actions to null at the end of each turn. This was breaking the extra-move turns,
       so I disabled it. I'm not sure it's needed, but I should look out for any bugs it could be causing.
+
+-- Implement scrolling text for the game frame

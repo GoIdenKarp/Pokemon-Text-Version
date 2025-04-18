@@ -24,11 +24,10 @@ public class ItemMapper {
                 return new ParalyzeHeal();
             case "OAKPARCEL":
                 return new OaksParcel();
-            case "None":
+            case "NONE":
                 return null;
             default:
                 throw new BadNameException(toMap);
-
         }
     }
 }

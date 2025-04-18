@@ -104,21 +104,41 @@ public class JsonBase64Util {
      */
     public static void main(String[] args) {
         try {
-            // Example usage
-            String jsonPath = "src/main/resources/json-data/Kanto_NewGame.json";
-            String base64Path = "src/main/resources/data/Kanto.newgame";
+            String inputDir = "src/main/resources/json-data";
+            String outputDir = "src/main/resources/data";
             
-            // Encode JSON to Base64
+            // Create output directory if it doesn't exist
+            Files.createDirectories(Paths.get(outputDir));
+            
+            // Process Kanto.json -> Kanto.region
+            String kantoJsonPath = Paths.get(inputDir, "Kanto.json").toString();
+            String kantoRegionPath = Paths.get(outputDir, "Kanto.region").toString();
+            
+            System.out.println("\nProcessing Kanto.json -> Kanto.region");
             System.out.println("Encoding JSON to Base64...");
-            encodeJsonToBase64File(jsonPath, base64Path);
+            encodeJsonToBase64File(kantoJsonPath, kantoRegionPath);
             System.out.println("Encoded successfully!");
             
-            // Decode and verify
-            System.out.println("\nDecoding Base64 back to JSON...");
-            JSONObject decoded = decodeBase64FileToJson(base64Path);
-            System.out.println("Decoded successfully!");
-            System.out.println("\nDecoded content:");
-            System.out.println(decoded.toJSONString());
+            // Verify the encoding
+            System.out.println("Verifying encoding...");
+            JSONObject decodedKanto = decodeBase64FileToJson(kantoRegionPath);
+            System.out.println("Verification successful!");
+            
+            // Process Kanto_NewGame.json -> Kanto.newgame
+            String newGameJsonPath = Paths.get(inputDir, "Kanto_NewGame.json").toString();
+            String newGamePath = Paths.get(outputDir, "Kanto.newgame").toString();
+            
+            System.out.println("\nProcessing Kanto_NewGame.json -> Kanto.newgame");
+            System.out.println("Encoding JSON to Base64...");
+            encodeJsonToBase64File(newGameJsonPath, newGamePath);
+            System.out.println("Encoded successfully!");
+            
+            // Verify the encoding
+            System.out.println("Verifying encoding...");
+            JSONObject decodedNewGame = decodeBase64FileToJson(newGamePath);
+            System.out.println("Verification successful!");
+            
+            System.out.println("\nAll files processed successfully!");
         } catch (Exception e) {
             System.err.println("Error during encoding/decoding process:");
             e.printStackTrace();

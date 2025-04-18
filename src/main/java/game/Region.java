@@ -28,6 +28,7 @@ public class Region {
 
     public static ArrayList<Area> createRegion(String filename, boolean JAR_MODE) {
         try {
+            System.out.println("Creating region from file: " + filename);
             // Get the resource as a stream
             InputStream inputStream = Region.class.getClassLoader().getResourceAsStream(filename);
             if (inputStream == null) {
@@ -145,12 +146,12 @@ public class Region {
     }
 
     private static void addConnections(ArrayList<Area> regionMap, JSONArray connections) {
+        System.out.println("Adding connections: " + connections);
         for (Object obj : connections) {
             JSONObject xObj = (JSONObject) obj;
             String first = (String) xObj.get(Keys.FIRST_KEY);
             String second = (String) xObj.get(Keys.SECOND_KEY);
             MoveRequirement requirement = MoveRequirement.map((String) xObj.get(Keys.REQUIREMENT_KEY));
-            System.out.println("first: " + first + " second: " + second + " requirement: " + requirement);
             //have to initialize to null, but in practice the values should always be updated
             Area areaOne = null;
             Area areaTwo = null;
@@ -161,6 +162,7 @@ public class Region {
                     areaTwo = area;
                 }
             }
+            System.out.println("areaOne: " + areaOne + " areaTwo: " + areaTwo + " requirement: " + requirement);
             areaOne.addConnection(areaTwo, requirement);
             areaTwo.addConnection(areaOne, requirement);
         }

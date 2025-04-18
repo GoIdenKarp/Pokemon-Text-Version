@@ -34,6 +34,8 @@ public class Game {
     private static final String SAVE_AREA_OPTION = "Save";
     private static final int MAX_PARTY_SIZE = 6;
 
+    private final static String HAS_DEX_FLAG = "DEXOWNED";  
+
     private static final String TALL_GRASS_OPTION = "Search for wild Pokémon (Tall Grass)";
     private static final String SURF_OPTION = "Search for wild Pokémon (Surfing)";
     private static final String FISHING_OPTION = "Search for wild Pokémon (Fishing)";
@@ -46,6 +48,7 @@ public class Game {
     private static final String TALKING_OPTION = "Talk";
     private static final String STORY_OPTION = "Progress the Story";
     private static final String EXIT_OPTION = "Exit Game";
+    private static final String POKEDEX_OPTION = "View the Pokédex";
     private static final String AREA_CHOICE_PROMPT = "What would you like to do?";
     private static final ArrayList<String> noBadgeItems = new ArrayList<>(Arrays.asList("Antidote", "ParalyzeHeal", "Potion", "Poké Ball"));
     private static final ArrayList<ArrayList<String>> martStock = new ArrayList<>(Arrays.asList(noBadgeItems));
@@ -107,6 +110,9 @@ public class Game {
     private void getAreaAction() {
         ArrayList<String> areaOptions = new ArrayList<>();
         areaOptions.add(MOVE_OPTION);
+        if (eventFlags.contains(HAS_DEX_FLAG)) {
+            areaOptions.add(POKEDEX_OPTION);
+        }
         if (currentArea.getTrainers() != null && currentArea.getTrainers().size() > 0) {
             areaOptions.add(TRAINERS_OPTION);
         }
@@ -182,10 +188,17 @@ public class Game {
             case SAVE_AREA_OPTION:
                 saveGame();
                 break;
+            case POKEDEX_OPTION:
+                viewPokédex();
+                break;
             default:
                 gameFrame.getGamePrinter().printNotYetImplemented();
                 break;
         }
+    }
+
+    private void viewPokédex() {
+        gameFrame.getGamePrinter().printNotYetImplemented();
     }
 
     /**
@@ -249,6 +262,7 @@ public class Game {
             } else if (event.ignoreFail()) {
                 setFlags(event);
                 currentArea.getEvents().remove(0);
+                break;
             } else {
                 if (event.resetOnFail()) {
                     event.reset();
@@ -270,8 +284,8 @@ public class Game {
             Area toLoosen = worldMap.get(fromArea);
             Area newConnection = worldMap.get(toArea);
             toLoosen.getMovePermissions().put(newConnection, MoveRequirement.NONE);
+            newConnection.getMovePermissions().put(toLoosen, MoveRequirement.NONE);
         }
-
         eventFlags.addAll(event.getEventFlagsToLift());
     }
 
@@ -300,6 +314,9 @@ public class Game {
 
     private boolean processItemEvent(ItemEvent subEvent) {
         Item item = subEvent.getItem();
+        if (item == null) {
+            return true;
+        }
         int quantity = subEvent.getQuantity();
         gameFrame.getGamePrinter().printObtainItems(item, quantity);
         addItem(item, quantity);
@@ -376,6 +393,7 @@ public class Game {
 
     private void switchAreas() {
         List<String> switchable = new ArrayList<>();
+        gameFrame.addString("You can move to the following areas: " + currentArea.getConnections());
         for (Area area : currentArea.getConnections()) {
             switchable.add(area.getName());
         }

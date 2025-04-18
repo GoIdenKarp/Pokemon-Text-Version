@@ -4,4 +4,6 @@
 "GETDEX"
     -- Event flag for giving Oak's Parcel to Oak
     -- Set from OAKPARCEL event
-
+"DEXOWNED"
+    -- Event flag for Pokédex being received
+    -- Set from GETDEX event
