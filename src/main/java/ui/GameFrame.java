@@ -225,6 +225,9 @@ public class GameFrame extends JFrame{
         private static final String NO_RUN_FROM_TRAINER = "You can't run from a trainer battle!";
         private static final String NO_PP_LEFT = "That move has no PP left!";
         private static final String ITEM_USED = "You used %s %s!";
+        private static final String ITEM_FOUND = "You found %s %s!";
+        private static final String CANT_GET_ITEM = "You see %s %s, but you can't get it without the move %s.";
+        private static final String NO_MORE_ITEMS = "There are no more items to find in %s.";
         private static final String CANNOT_CATCH_OWNED = "You can't catch a Pokémon that isn't wild!";
         private static final String HEALING_ITEM_USED = "%s %s was healed by %d!";
         private static final String NO_SHAKES = "Oh no! The Pokémon broke free!";
@@ -701,6 +704,24 @@ public class GameFrame extends JFrame{
 
         public void printUsedBallOnTrainer() {
             addString(String.format(CANNOT_CATCH_OWNED));
+        }
+
+        public void printItemFound(Item item) {
+            String itemName = item.getName();
+            Character firstLetter = itemName.charAt(0);
+            String article = (vowels.contains(firstLetter)) ? "an" : "a";
+            addString(String.format(ITEM_FOUND, article, itemName));
+        }
+
+        public void printCantGetItem(Item item, MoveRequirement moveRequirement) {
+            String itemName = item.getName();
+            String article = (vowels.contains(firstLetter)) ? "an" : "a";
+            String moveName = moveRequirement.toString();
+            addString(String.format(CANT_GET_ITEM, article, itemName, moveName));
+        }
+
+        public void printNoMoreItems(Area area) {
+            addString(String.format(NO_MORE_ITEMS, area.getName()));
         }
 
         public void printItemUse(Item item) {

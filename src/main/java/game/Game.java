@@ -160,6 +160,7 @@ public class Game {
                 wildEncounter(FISHING);
                 break;
             case ITEMS_OPTION:
+                searchForItems();
                 break;
             case HEALING_OPTION:
                 gameFrame.getGamePrinter().printHealing();
@@ -199,6 +200,25 @@ public class Game {
 
     private void viewPokédex() {
         gameFrame.getGamePrinter().printNotYetImplemented();
+    }
+
+    private void searchForItems() {
+        List<ItemBall> itemBalls = currentArea.getItems();
+        if (itemBalls.isEmpty()) {
+            gameFrame.getGamePrinter().printNoMoreItems(currentArea);
+            return;
+        }
+        ItemBall next = itemBalls.get(0);
+        if (meetsMoveRequirement(next.getMoveRequirement())) {
+            gameFrame.getGamePrinter().printItemFound(next.getItem());
+            addItem(next.getItem(), 1);
+            currentArea.getItems().remove(0);
+        } else {
+            gameFrame.getGamePrinter().printCantGetItem(next.getItem(), next.getMoveRequirement());
+            //If we can't get item now, add it to the back of the list
+            currentArea.getItems().remove(0);
+            currentArea.getItems().add(next);
+        }
     }
 
     /**
