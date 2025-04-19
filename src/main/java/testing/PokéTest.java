@@ -1,6 +1,6 @@
 package testing;
 
-import battle.BattleRedux;
+import battle.Battle;
 import enums.Owner;
 import enums.Species;
 import enums.Weather;

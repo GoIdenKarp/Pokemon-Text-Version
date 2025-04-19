@@ -2,7 +2,7 @@ package game;
 
 import areas.Area;
 import areas.WildSlot;
-import battle.BattleRedux;
+import battle.Battle;
 import enums.MoveRequirement;
 import enums.Owner;
 import enums.Species;
@@ -521,12 +521,12 @@ public class Game {
     }
 
     private void startBattle(Pokémon wildMon) {
-        new BattleRedux(player, wildMon, currentArea.getWeather(), gameFrame).battle();
+        new Battle(player, wildMon, currentArea.getWeather(), gameFrame).battle();
         checkForEvolution();
     }
 
     private void startBattle(Trainer trainer) {
-        new BattleRedux(player, trainer, currentArea.getWeather(), gameFrame).battle();
+        new Battle(player, trainer, currentArea.getWeather(), gameFrame).battle();
         checkForEvolution();
     }
 

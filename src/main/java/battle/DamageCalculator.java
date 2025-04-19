@@ -33,8 +33,8 @@ public class DamageCalculator {
     public static int confusionHit(BattleSlot slot) {
         double atk = (double)slot.getPokémon().getStats()[ATK_INDEX];
         double def = (double)slot.getPokémon().getStats()[DEF_INDEX];
-        double atkStage = BattleRedux.getStatMod(slot.getStatMod(ATK_INDEX));
-        double defStage = BattleRedux.getStatMod(slot.getStatMod(DEF_INDEX));
+        double atkStage = Battle.getStatMod(slot.getStatMod(ATK_INDEX));
+        double defStage = Battle.getStatMod(slot.getStatMod(DEF_INDEX));
         atk *= atkStage;
         def *= defStage;
         double partOne = 2.0*(double)slot.getPokémon().getLevel()/5.0 + 2.0;
@@ -176,8 +176,8 @@ public class DamageCalculator {
     private double calculateElectroBallPower(MoveAction action, BattleSlot target) {
         double userSpeed = action.getUserSlot().getPokémon().getStats()[SPD_INDEX];
         double targetSpeed = target.getPokémon().getStats()[SPD_INDEX];
-        userSpeed *= BattleRedux.getStatMod(action.getUserSlot().getStatMod(SPD_INDEX));
-        targetSpeed *= BattleRedux.getStatMod(target.getStatMod(SPD_INDEX));
+        userSpeed *= Battle.getStatMod(action.getUserSlot().getStatMod(SPD_INDEX));
+        targetSpeed *= Battle.getStatMod(target.getStatMod(SPD_INDEX));
         double quotient = userSpeed/targetSpeed;
         if (quotient >= 4) {
             return 150;
@@ -228,7 +228,7 @@ public class DamageCalculator {
             }
         }
         //Pursuit has double power if it's specially used
-        if (BattleRedux.isPursuit(action)) {
+        if (Battle.isPursuit(action)) {
             if (((Pursuit)action.getMove()).isSpecialEffectActive()) {
                 mod *= 2;
             }
@@ -250,11 +250,11 @@ public class DamageCalculator {
         int defStage = target.getStatMod(defIndex);
         atk *= getBaseStatMods(action);
         if (!(crit && atkStage < 0)) {
-            atk *= BattleRedux.getStatMod(atkStage);
+            atk *= Battle.getStatMod(atkStage);
         }
         if (!(crit && defStage > 0)) {
 
-            def *= (float) BattleRedux.getStatMod(defStage);
+            def *= (float) Battle.getStatMod(defStage);
         }
         return atk/def;
 

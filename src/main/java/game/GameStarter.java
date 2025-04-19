@@ -1,7 +1,7 @@
 package game;
 
 import areas.Area;
-import battle.BattleRedux;
+import battle.Battle;
 import enums.Owner;
 import enums.Species;
 import enums.Weather;
@@ -99,7 +99,7 @@ public class GameStarter {
         ArrayList<PartySlot> compParty = new ArrayList<>(Arrays.asList(compCharizard, compVenusaur, compBlastoise));
         Trainer testTrainer = new Trainer("Tester", "Joe", "Ready for a battle?","Lookin' good, Ari!",
                 "The circle is now complete.", 1, false, compParty);
-        new BattleRedux(ari, testTrainer, Weather.NONE, gameFrame).battle();
+        new Battle(ari, testTrainer, Weather.NONE, gameFrame).battle();
     }
 
     private void startAdventureMode(boolean newGame) {

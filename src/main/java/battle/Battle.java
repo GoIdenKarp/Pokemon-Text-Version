@@ -16,7 +16,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import static pokémon.Pokémon.*;
 import static pokémon.Pokémon.HP_INDEX;
 
-public class BattleRedux implements Comparator<Action>{
+public class Battle implements Comparator<Action>{
 
     private static Pokémon getFirstHealthyPokémon(ArrayList<Pokémon> party) {
         return getFirstHealthyPokémon(party, null);
@@ -181,7 +181,7 @@ public class BattleRedux implements Comparator<Action>{
 
     //Constructors
     //Wild
-    public BattleRedux(Player player, Pokémon compParty, Weather weather, GameFrame frame) { this.player = player;
+    public Battle(Player player, Pokémon compParty, Weather weather, GameFrame frame) { this.player = player;
         this.player = player;
 
         this.compParty = new ArrayList<>();
@@ -201,7 +201,7 @@ public class BattleRedux implements Comparator<Action>{
     }
 
     //Trainer
-    public BattleRedux(Player player, Trainer oppTrainer, Weather weather, GameFrame frame) {
+    public Battle(Player player, Trainer oppTrainer, Weather weather, GameFrame frame) {
         this.player = player;
         this.compParty = oppTrainer.generateParty(new PokémonFactory(frame.getInputHelper(), frame.getGamePrinter()));
         wild = false;
