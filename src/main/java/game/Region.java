@@ -57,7 +57,6 @@ public class Region {
             JSONObject areasObj = (JSONObject) regionObj.get(Keys.AREAS_KEY);
             JSONArray connections = (JSONArray) regionObj.get(Keys.CONNECTIONS_KEY);
             ArrayList<Area> regionMap = parseAreas(areasObj);
-            addConnections(regionMap, connections);
             return regionMap;
         } catch (Exception e) {
             System.err.println("Error loading region: " + e.getMessage());
@@ -144,28 +143,6 @@ public class Region {
         }
         return treeMapify(wildSlots);
     }
-
-    private static void addConnections(ArrayList<Area> regionMap, JSONArray connections) {
-        for (Object obj : connections) {
-            JSONObject xObj = (JSONObject) obj;
-            String first = (String) xObj.get(Keys.FIRST_KEY);
-            String second = (String) xObj.get(Keys.SECOND_KEY);
-            MoveRequirement requirement = MoveRequirement.map((String) xObj.get(Keys.REQUIREMENT_KEY));
-            //have to initialize to null, but in practice the values should always be updated
-            Area areaOne = null;
-            Area areaTwo = null;
-            for (Area area : regionMap) {
-                if (area.getName().equals(first)) {
-                    areaOne = area;
-                } else if (area.getName().equals(second)) {
-                    areaTwo = area;
-                }
-            }
-            areaOne.addConnection(areaTwo, requirement);
-            areaTwo.addConnection(areaOne, requirement);
-        }
-    }
-
 
     /**
      * Dynamically generate the TreeMap for the WildSlots for a given Area. This needs to be done because there

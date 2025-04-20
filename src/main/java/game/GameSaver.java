@@ -63,6 +63,7 @@ public class GameSaver {
             JSONObject saveData = new JSONObject();
             saveData.put(Keys.PLAYER_KEY, writePlayer(game.getPlayer(), game.getCurrentArea()));
             saveData.put(Keys.AREAS_KEY, writeGameState(game));
+            saveData.put(Keys.CONNECTIONS_KEY, writeConnections(game.getWorldMap()));
             
             String saveString = encode(saveData.toJSONString());
             writer.println(saveString);
@@ -82,6 +83,46 @@ public class GameSaver {
             e.printStackTrace();
             return false;
         }
+    }
+
+    //Connections have to be written as part of save in case we have passed events that lift movement restrictions
+    private static JSONArray writeConnections(Map<String, Area> worldMap) {
+        JSONArray connections = new JSONArray();
+        Set<String> processedConnections = new HashSet<>();
+        
+        for (Area area : worldMap.values()) {
+            String areaName = area.getName();
+            
+            for (Area connectedArea : area.getConnections()) {
+                String connectedName = connectedArea.getName();
+                
+                // Create a unique key for this connection
+                String connectionKey = areaName.compareTo(connectedName) < 0 
+                    ? areaName + "|" + connectedName 
+                    : connectedName + "|" + areaName;
+                    
+                // Only process if we haven't seen this connection before
+                if (!processedConnections.contains(connectionKey)) {
+                    processedConnections.add(connectionKey);
+                    
+                    JSONObject connectionObj = new JSONObject();
+                    // Always put the alphabetically earlier name first
+                    if (areaName.compareTo(connectedName) < 0) {
+                        connectionObj.put(Keys.FIRST_KEY, areaName);
+                        connectionObj.put(Keys.SECOND_KEY, connectedName);
+                        connectionObj.put(Keys.REQUIREMENT_KEY, 
+                            area.getMovePermissions().get(connectedArea).toString());
+                    } else {
+                        connectionObj.put(Keys.FIRST_KEY, connectedName);
+                        connectionObj.put(Keys.SECOND_KEY, areaName);
+                        connectionObj.put(Keys.REQUIREMENT_KEY, 
+                            connectedArea.getMovePermissions().get(area).toString());
+                    }
+                    connections.add(connectionObj);
+                }
+            }
+        }
+        return connections;
     }
 
     private static JSONObject writeGameState(Game game) {

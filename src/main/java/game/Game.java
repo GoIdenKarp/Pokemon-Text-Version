@@ -177,12 +177,7 @@ public class Game {
                 break;
             case HEALING_OPTION:
                 gameFrame.getGamePrinter().printHealing();
-                for (Pokémon mon : player.getParty()) {
-                    if (mon == null) {
-                        break;
-                    }
-                    mon.fullyHeal();
-                }
+                healParty();
                 break;
             case MART_OPTION:
                 goToMart();
@@ -311,6 +306,15 @@ public class Game {
                 }
                 break;
             }
+        }
+    }
+
+    private void healParty() {
+        for (Pokémon mon : player.getParty()) {
+            if (mon == null) {
+                break;
+            }
+            mon.fullyHeal();
         }
     }
 
@@ -568,9 +572,10 @@ public class Game {
             }
         }
     }
-
-    //TODO: implement
     private void whiteOut() {
+        currentArea = lastHealingArea;
+        healParty();
+        gameFrame.getGamePrinter().printWhiteOutResults(currentArea);
     }
 
     /**

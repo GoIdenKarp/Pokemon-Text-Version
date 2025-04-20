@@ -1140,6 +1140,7 @@ public class GameFrame extends JFrame{
         private static final String ITEM_FOUND = "You found %s %s!";
         private static final String CANT_GET_ITEM = "You see %s %s, but you can't get it without the move %s.";
         private static final String NO_MORE_ITEMS = "There are no more items to find in %s.";
+        private static final String WHITE_OUT_RESULTS = "You scurry back to %s, and fully heal your party!";
 
         public void printLevel_UP(Pokémon mon) {
             addString(String.format(LEVEL_UP, mon, mon.getLevel()));
@@ -1285,6 +1286,10 @@ public class GameFrame extends JFrame{
 
         public void printNoMoreItems(Area area) {
             addString(String.format(NO_MORE_ITEMS, area.getName()));
+        }
+
+        public void printWhiteOutResults(Area area) {
+            addString(String.format(WHITE_OUT_RESULTS, area.getName()));
         }
     }
 

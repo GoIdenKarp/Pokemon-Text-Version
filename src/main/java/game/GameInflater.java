@@ -95,6 +95,8 @@ public class GameInflater {
                 }
                 JSONObject areasObj = (JSONObject) saveObj.get(Keys.AREAS_KEY);
                 inflateAreas(gameMap, areasObj);
+                JSONArray connectionsObj = (JSONArray) saveObj.get(Keys.CONNECTIONS_KEY);
+                addConnections(gameMap, connectionsObj);
                 //When parsing areas, I need to check for an "items" key, and if it doesn't exist pass in an empty list for items
                 String saveFile = newGame ? "" : gameFile;
                 Game game = new Game(gameFrame, gameMap, player, prologue, currentArea, saveFile);
@@ -104,6 +106,27 @@ public class GameInflater {
             e.printStackTrace();
             System.err.println("Parse exception: " + e.getMessage());
             throw new RuntimeException("Failed to parse game file: " + gameFile, e);
+        }
+    }
+
+    private static void addConnections(List<Area> regionMap, JSONArray connections) {
+        for (Object obj : connections) {
+            JSONObject xObj = (JSONObject) obj;
+            String first = (String) xObj.get(Keys.FIRST_KEY);
+            String second = (String) xObj.get(Keys.SECOND_KEY);
+            MoveRequirement requirement = MoveRequirement.map((String) xObj.get(Keys.REQUIREMENT_KEY));
+            //have to initialize to null, but in practice the values should always be updated
+            Area areaOne = null;
+            Area areaTwo = null;
+            for (Area area : regionMap) {
+                if (area.getName().equals(first)) {
+                    areaOne = area;
+                } else if (area.getName().equals(second)) {
+                    areaTwo = area;
+                }
+            }
+            areaOne.addConnection(areaTwo, requirement);
+            areaTwo.addConnection(areaOne, requirement);
         }
     }
 

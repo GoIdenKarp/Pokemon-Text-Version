@@ -594,6 +594,7 @@ public abstract class Pokémon implements Cloneable {
         for (Move move : moveSet) {
             move.refillPP();
         }
+        this.status = Status.NONE;
     }
 
     public String toString() {
