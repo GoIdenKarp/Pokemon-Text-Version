@@ -435,7 +435,6 @@ public class Game {
 
     private void switchAreas() {
         List<String> switchable = new ArrayList<>();
-        gameFrame.addString("You can move to the following areas: " + currentArea.getConnections());
         for (Area area : currentArea.getConnections()) {
             switchable.add(area.getName());
         }
