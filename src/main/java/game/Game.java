@@ -1,6 +1,7 @@
 package game;
 
 import areas.Area;
+import areas.ItemBall;
 import areas.WildSlot;
 import battle.Battle;
 import enums.MoveRequirement;
@@ -130,9 +131,9 @@ public class Game {
         }
         if (currentArea.isHealingSpot()) {
             areaOptions.add(HEALING_OPTION);
-            if (player.getParty().size() > 0) {
-                areaOptions.add(PC_OPTION);
-            }
+        }
+        if (player.getParty().size() > 0) {
+            areaOptions.add(PC_OPTION);
         }
         if (currentArea.hasMart()) {
             areaOptions.add(MART_OPTION);
@@ -209,15 +210,24 @@ public class Game {
             return;
         }
         ItemBall next = itemBalls.get(0);
-        if (meetsMoveRequirement(next.getMoveRequirement())) {
+        if (meetsMoveRequirement(next.getObtainRequirement())) {
             gameFrame.getGamePrinter().printItemFound(next.getItem());
             addItem(next.getItem(), 1);
             currentArea.getItems().remove(0);
         } else {
-            gameFrame.getGamePrinter().printCantGetItem(next.getItem(), next.getMoveRequirement());
+            gameFrame.getGamePrinter().printCantGetItem(next.getItem(), next.getObtainRequirement());
             //If we can't get item now, add it to the back of the list
             currentArea.getItems().remove(0);
             currentArea.getItems().add(next);
+        }
+    }
+
+    private boolean meetsMoveRequirement(MoveRequirement moveRequirement) {
+        switch(moveRequirement) {
+            case NONE:
+                return true;
+            default:
+                return false;
         }
     }
 

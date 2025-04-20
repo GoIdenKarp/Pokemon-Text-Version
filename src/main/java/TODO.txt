@@ -40,3 +40,5 @@
       so I disabled it. I'm not sure it's needed, but I should look out for any bugs it could be causing.
 
 -- Implement scrolling text for the game frame
+
+-- Pokémon is null when losing first battle?

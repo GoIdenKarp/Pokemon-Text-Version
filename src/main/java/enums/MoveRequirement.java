@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum MoveRequirement {
-    NONE, SURF, STRENGTH, ROCK_SMASH, EVENT;
+    NONE, SURF, STRENGTH, ROCK_SMASH, EVENT, CUT;
 
     public static MoveRequirement map(String toMap) {
         switch (toMap) {
@@ -16,6 +16,8 @@ public enum MoveRequirement {
                 return ROCK_SMASH;
             case "EVENT":
                 return EVENT;
+            case "CUT":
+                return CUT;
             default:
                 return NONE;
         }

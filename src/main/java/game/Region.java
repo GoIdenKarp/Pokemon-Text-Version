@@ -146,7 +146,6 @@ public class Region {
     }
 
     private static void addConnections(ArrayList<Area> regionMap, JSONArray connections) {
-        System.out.println("Adding connections: " + connections);
         for (Object obj : connections) {
             JSONObject xObj = (JSONObject) obj;
             String first = (String) xObj.get(Keys.FIRST_KEY);
@@ -162,7 +161,6 @@ public class Region {
                     areaTwo = area;
                 }
             }
-            System.out.println("areaOne: " + areaOne + " areaTwo: " + areaTwo + " requirement: " + requirement);
             areaOne.addConnection(areaTwo, requirement);
             areaTwo.addConnection(areaOne, requirement);
         }

@@ -125,8 +125,8 @@ public class Battle implements Comparator<Action>{
     public static final int THIRTY_PERCENT = 30;
     public static final int CHOICE_FIGHT = 0;
     public static final int CHOICE_SWITCH = 1;
-    //public static final int CHOICE_ITEM = 2;
-    public static final int CHOICE_RUN = 2;
+    public static final int CHOICE_ITEM = 2;
+    public static final int CHOICE_RUN = 3 ;
     private static final int MAX_STAT_MOD = 6;
     private static final int MIN_STAT_MOD = -6;
     public static final int GUARANTEED_ACCURACY = -1;
@@ -135,7 +135,7 @@ public class Battle implements Comparator<Action>{
 
     //Instance variables
 
-    private static final String[] BATTLE_OPTIONS = {"Fight", "Switch", "Run"};
+    private static final String[] BATTLE_OPTIONS = {"Fight", "Switch", "Item", "Run"};
     private static final int THAW_CHANCE = 21;
     private static final int CONFUSE_INFATUATE_CHANCE = 51;
     private static final int PARALYSIS_CHANCE = 26;
@@ -394,7 +394,7 @@ public class Battle implements Comparator<Action>{
                 battlePrinter.printHealItemUsed(userSlot.getPokémon(), 50);
                 break;  
             default:
-                break;
+                break; 
         }
     }
 
@@ -661,9 +661,9 @@ public class Battle implements Comparator<Action>{
                         battlePrinter.printCantSwap();
                     }
                     break;
-//                case CHOICE_ITEM:
-//                    action = getPlayerItem(playerSlot);
-//                    break;
+               case CHOICE_ITEM:
+                   action = getPlayerItemAction(playerSlot);
+                   break;
                 case CHOICE_RUN:
                     if (wild) {
                         action = new RunAction(playerSlot);
@@ -682,7 +682,7 @@ public class Battle implements Comparator<Action>{
      * Picks an item for the player to use during their turn
      * @return The ItemAction representing the player's choice
      */
-    private ItemAction getPlayerItem(BattleSlot playerSlot) {
+    private ItemAction getPlayerItemAction(BattleSlot playerSlot) {
         String itemName = inputHelper.getBattleItem(player.getBag());
         Item toUse = player.getBag().getItemByName(itemName);
         return new ItemAction(playerSlot, toUse);
@@ -2440,6 +2440,8 @@ public class Battle implements Comparator<Action>{
 
     @Override
     public int compare(Action a1, Action a2) {
+        System.out.println("Comparing " + a1.getClass().getSimpleName() + " and " + a2.getClass().getSimpleName());
+        System.out.println("Priority: " + a1.getPriority() + " and " + a2.getPriority());
         if (a1.getPriority() > a2.getPriority()) {
             return -1;
         } else if (a2.getPriority() > a1.getPriority()) {

@@ -5,7 +5,12 @@ import items.Item;
 
 public class ItemAction extends Action {
 
+    private static final int PRIORIRTY = 7;
+
     private Item item;
+
+
+
 
     public ItemAction(BattleSlot slot, Item item) {
         super(slot);
@@ -14,7 +19,7 @@ public class ItemAction extends Action {
 
     @Override
     public int getPriority() {
-        return 0;
+        return PRIORIRTY;
     }
 
     public Item getItem() {

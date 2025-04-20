@@ -14,7 +14,7 @@ public class Potion extends HealingItem {
 
     }
 
-    public HealEffect getHealingEffect() {
+    public HealEffect getEffect() {
         return HEALING_AMOUNT;
     }
 
