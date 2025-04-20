@@ -96,7 +96,8 @@ public class GameInflater {
                 JSONObject areasObj = (JSONObject) saveObj.get(Keys.AREAS_KEY);
                 inflateAreas(gameMap, areasObj);
                 //When parsing areas, I need to check for an "items" key, and if it doesn't exist pass in an empty list for items
-                Game game = new Game(gameFrame, gameMap, player, prologue, currentArea);
+                String saveFile = newGame ? "" : gameFile;
+                Game game = new Game(gameFrame, gameMap, player, prologue, currentArea, saveFile);
                 return game;
             }
         } catch (ParseException e) {

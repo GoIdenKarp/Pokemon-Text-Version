@@ -80,7 +80,19 @@ public class Game {
         eventFlags  = new HashSet<>(Collections.singleton(""));
         this.prologue = prologue;
         currentArea = areaList.stream().filter(area -> area.getName().equals(startingArea)).findFirst().orElse(areaList.get(0));
+    }
 
+    public Game(GameFrame gameFrame, List<Area> areaList, Player player, List<String> prologue, String startingArea, String saveFile) {
+        this.gameFrame = gameFrame;
+        factory = new PokémonFactory(gameFrame.getInputHelper(), gameFrame.getGamePrinter());
+        this.areaList = areaList;
+        makeWorldMap();
+        flyOptions = new HashSet<>();
+        this.player = player;
+        eventFlags  = new HashSet<>(Collections.singleton(""));
+        this.prologue = prologue;
+        currentArea = areaList.stream().filter(area -> area.getName().equals(startingArea)).findFirst().orElse(areaList.get(0));
+        this.saveFile = saveFile;
     }
 
     private void makeWorldMap() {

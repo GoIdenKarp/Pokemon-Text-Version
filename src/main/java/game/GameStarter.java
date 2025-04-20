@@ -52,7 +52,7 @@ public class GameStarter {
 
         List<String> saves = findSaves();
         if (!saves.isEmpty()) {
-            GAME_MODE_OPTIONS.add(LOAD_MODE);
+            GAME_MODE_OPTIONS.add(0, LOAD_MODE);
         }
         String gameModeChoice = gameFrame.getInputHelper().getInputFromOptions(GAME_MODE_OPTIONS, "Game Mode Selection",
                 "Please select which game mode you would like to play:");
