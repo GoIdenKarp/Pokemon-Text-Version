@@ -360,7 +360,7 @@ public class GameSaver {
             HashMap<Item, Integer> hashMap = bag.getPockets()[i].getItemListRaw();
             for (Item item : hashMap.keySet()) {
                 JSONObject itemObj = new JSONObject();
-                itemObj.put(Keys.ITEM_KEY, item.getName());
+                itemObj.put(Keys.ITEM_KEY, item.getEncodedName());
                 itemObj.put(Keys.AMOUNT_KEY, hashMap.get(item));
                 bagList.add(itemObj);
             }
