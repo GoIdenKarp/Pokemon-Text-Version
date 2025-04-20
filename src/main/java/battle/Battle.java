@@ -2440,8 +2440,6 @@ public class Battle implements Comparator<Action>{
 
     @Override
     public int compare(Action a1, Action a2) {
-        System.out.println("Comparing " + a1.getClass().getSimpleName() + " and " + a2.getClass().getSimpleName());
-        System.out.println("Priority: " + a1.getPriority() + " and " + a2.getPriority());
         if (a1.getPriority() > a2.getPriority()) {
             return -1;
         } else if (a2.getPriority() > a1.getPriority()) {
