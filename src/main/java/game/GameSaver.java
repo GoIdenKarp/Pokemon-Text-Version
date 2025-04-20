@@ -210,7 +210,8 @@ public class GameSaver {
     private static JSONObject writeItemEvent(ItemEvent event) {
         JSONObject eventObj = new JSONObject();
         eventObj.put(Keys.TYPE_KEY, Keys.ITEM_EVENT);
-        eventObj.put(Keys.ITEM_KEY, event.getItem().getEncodedName());
+        String itemName = event.getItem() == null ? "NONE" : event.getItem().getEncodedName();
+        eventObj.put(Keys.ITEM_KEY, itemName);
         eventObj.put(Keys.AMOUNT_KEY, event.getQuantity());
         eventObj.put(Keys.BEFORE_KEY, event.getBeforeMain());
         eventObj.put(Keys.AFTER_KEY, event.getAfterMain());
