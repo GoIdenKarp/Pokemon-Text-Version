@@ -108,7 +108,7 @@ public class GameSaver {
         JSONArray areaItems = new JSONArray();
         for (ItemBall itemBall : items) {
             JSONObject itemObj = new JSONObject();
-            itemObj.put(Keys.ITEM_KEY, itemBall.getItem().getName());
+            itemObj.put(Keys.ITEM_KEY, itemBall.getItem().getEncodedName());
             itemObj.put(Keys.REQUIREMENT_KEY, itemBall.getObtainRequirement().toString());
             areaItems.add(itemObj);
         }
@@ -152,7 +152,7 @@ public class GameSaver {
         eventObj.put(Keys.SPECIES_KEY, event.getMon().ordinal());
         eventObj.put(Keys.LEVEL_KEY, event.getLevel());
         if (event.getItem() != null) {
-            eventObj.put(Keys.ITEM_KEY, event.getItem().getName());
+            eventObj.put(Keys.ITEM_KEY, event.getItem().getEncodedName());
         }
         eventObj.put(Keys.BEFORE_KEY, event.getBeforeMain());
         eventObj.put(Keys.AFTER_KEY, event.getAfterMain());
@@ -319,7 +319,7 @@ public class GameSaver {
             slotObj.put(Keys.SPECIES_KEY, slot.getMon().toString());
             slotObj.put(Keys.LEVEL_KEY, slot.getLevel());
             if (slot.getItem() != null) {
-                slotObj.put(Keys.ITEM_KEY, slot.getItem().getName());
+                slotObj.put(Keys.ITEM_KEY, slot.getItem().getEncodedName());
             }
             if (slot.getMoveSet() != null) {
                 JSONArray moveList = new JSONArray();
