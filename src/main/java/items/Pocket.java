@@ -32,7 +32,7 @@ public class Pocket {
     public ArrayList<String> getItemList() {
         ArrayList<String> toReturn = new ArrayList<>();
         for (Map.Entry<Item, Integer> entry : itemList.entrySet()) {
-            String stringifiedItem = entry.getKey().getName() + " (" + entry.getValue().toString() + ")";
+            String stringifiedItem = entry.getKey().getName() + " | " + entry.getValue().toString();
             toReturn.add(stringifiedItem);
         }
         return toReturn;

@@ -451,12 +451,14 @@ public class Battle implements Comparator<Action>{
         a /= (3 * catchTarget.getStats()[HP_INDEX]);
         a *= statusBonus;
         double shakeProbability = 1048560 / Math.sqrt(Math.sqrt(16711680/a));
-        for (int i = 1; i <=SHAKE_CHECKS; i++) {
+        for (int i = 1; i <= SHAKE_CHECKS; i++) {
             double random = new Random().nextInt(SHAKE_CHECK_MAX_NUM + 1);
             if (random >= shakeProbability) {
                 //catch fails
-                battlePrinter.printCatchFail(i);
+                battlePrinter.printCatchFail(catchTarget, i);
                 return;
+            } else {
+                battlePrinter.printShake();
             }
         }
         //if we get here, the catch must have succeeded
@@ -466,19 +468,9 @@ public class Battle implements Comparator<Action>{
 
     private void processCatchSuccess() {
         battlePrinter.printCatchSuccess(compSide.getSlotOne().getPokémon());
-        //TODO: Pokédex entries?
-        boolean addedToParty = false;
         compSide.getSlotOne().integrate();
-        if (player.getParty().size() < 6) {
-            player.getParty().add(compSide.getSlotOne().getOriginal());
-            addedToParty = true;
-        } else {
-            player.setTempCaughtStorage(compSide.getSlotOne().getOriginal());
-        }
-        compSide.getSlotOne().getOriginal().onCatch();
-        if (!addedToParty) {
-            battlePrinter.printSentToPC(compSide.getSlotOne().getOriginal());
-        }
+        player.setTempCaughtStorage(compSide.getSlotOne().getOriginal());
+        battleOver = true;
     }
 
 

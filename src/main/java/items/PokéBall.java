@@ -14,7 +14,7 @@ public class PokéBall extends Ball {
 
     }
 
-    public BallEffect getBallEffect() {
+    public BallEffect getEffect() {
         return BALL_EFFECT;
     }
 

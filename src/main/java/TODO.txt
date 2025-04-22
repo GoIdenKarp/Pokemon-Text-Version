@@ -41,4 +41,4 @@
 
 -- Implement scrolling text for the game frame
 
--- Pokémon is null when losing first battle?
+-- Need to store player's last-visted town, or else whiting out won't work on load

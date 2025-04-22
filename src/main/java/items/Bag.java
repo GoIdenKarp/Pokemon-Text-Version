@@ -42,7 +42,7 @@ public class Bag {
 
 
     /**
-     * Finds an item in one of the Pockets by it's name. This should only be called when we know the named item is
+     * Finds an item in one of the Pockets by its name. This should only be called when we know the named item is
      * present
      * @param itemName The String matching the desired Item's name
      * @return The item, or null in the case it cannot be found (shouldn't happen)

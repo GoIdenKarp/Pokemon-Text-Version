@@ -232,6 +232,7 @@ public class GameFrame extends JFrame{
         private static final String TWO_SHAKES = "Aargh! Almost had it!";
         private static final String THREE_SHAKES = "Gah! It was so close, too!";
         private static final String CATCH_SUCCESS = "Gotcha! %s was caught!";
+        private static final String CATCH_FAIL = "%s broke free!";
         private static final String SHED_SKIN_ACTIVATE = "%s %s's Shed Skin cured its status problem!";
         private static final String SAFEGUARD_ACTIVATE = "%s %s's team is now protected by Safeguard!";
         private static final String SAFEGUARD_END = "%s Safeguard ended.";
@@ -250,6 +251,7 @@ public class GameFrame extends JFrame{
         private static final String ENCORE_END = "%s %s's encore ended.";
         private static final String HAZE_ACTIVATE = "All stat changes were eliminated!";
         private static final String ONE_HIT_KO = "It's a One-hit KO!";
+        private static final String CATCH_SHAKE = "The ball shakes!";
         private static final String BUFFER = "---------------------------------\n";
 
 
@@ -714,7 +716,8 @@ public class GameFrame extends JFrame{
             addString(String.format(HEALING_ITEM_USED, pokémon.getOwnerMsg(), pokémon, amt));
         }
 
-        public void printCatchFail(int shakes) {
+        public void printCatchFail(Pokémon catchTarget, int shakes) {
+            addString(String.format(CATCH_FAIL, catchTarget.getName));
             String print;
             if (shakes == 0) {
                 print = NO_SHAKES;
@@ -726,6 +729,15 @@ public class GameFrame extends JFrame{
                 print = THREE_SHAKES;
             }
             addString(String.format(print));
+        }
+
+        public void printShake() {
+            addString(String.format(CATCH_SHAKE));
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
 
         public void printShedSkinActivate(Pokémon mon) {
@@ -1041,7 +1053,7 @@ public class GameFrame extends JFrame{
             totalList.addAll(playerBag.getBalls());
             totalList.addAll(playerBag.getBerries());
             String option = getInputFromOptions(totalList, "Bag", "Which item will you use?");
-            return option.split(" ")[0];
+            return option.split(" \\| ")[0];
         }
 
         public boolean shouldEvolve(Pokémon mon) {
