@@ -64,6 +64,7 @@ public class GameSaver {
             saveData.put(Keys.PLAYER_KEY, writePlayer(game.getPlayer(), game.getCurrentArea()));
             saveData.put(Keys.AREAS_KEY, writeGameState(game));
             saveData.put(Keys.CONNECTIONS_KEY, writeConnections(game.getWorldMap()));
+            saveData.put(Keys.EXTRAS_KEY, writeExtras(game));
             
             String saveString = encode(saveData.toJSONString());
             writer.println(saveString);
@@ -83,6 +84,13 @@ public class GameSaver {
             e.printStackTrace();
             return false;
         }
+    }
+
+    private static JSONObject writeExtras(Game game) {
+        JSONObject extrasObj = new JSONObject();
+        extrasObj.put(Keys.LAST_VISITED_KEY, game.getLastHealingArea().getName());
+        extrasObj.put(Keys.FLYABLE_KEY, game.getFlyOptions().stream().map(Area::getName).toArray(String[]::new));
+        return extrasObj;
     }
 
     //Connections have to be written as part of save in case we have passed events that lift movement restrictions

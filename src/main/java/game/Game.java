@@ -9,7 +9,7 @@ import enums.Owner;
 import enums.Species;
 import enums.Status;
 import events.*;
-import items.Item;
+import items.*;
 import moves.Move;
 import pokémon.Pokémon;
 import pokémon.PokémonFactory;
@@ -74,25 +74,34 @@ public class Game {
         factory = new PokémonFactory(gameFrame.getInputHelper(), gameFrame.getGamePrinter());
         this.areaList = areaList;
         makeWorldMap();
-        flyOptions = new HashSet<>();
         saveFile = "";
         this.player = player;
         eventFlags  = new HashSet<>(Collections.singleton(""));
         this.prologue = prologue;
         currentArea = areaList.stream().filter(area -> area.getName().equals(startingArea)).findFirst().orElse(areaList.get(0));
+        lastHealingArea = currentArea;
+        flyOptions = new HashSet<>();
+        flyOptions.add(currentArea);
     }
 
-    public Game(GameFrame gameFrame, List<Area> areaList, Player player, List<String> prologue, String startingArea, String saveFile) {
+    public Game(GameFrame gameFrame, List<Area> areaList, Player player, List<String> prologue, String startingArea, String saveFile, String lastVisited, String[] flyOptions) {
         this.gameFrame = gameFrame;
         factory = new PokémonFactory(gameFrame.getInputHelper(), gameFrame.getGamePrinter());
         this.areaList = areaList;
         makeWorldMap();
-        flyOptions = new HashSet<>();
         this.player = player;
         eventFlags  = new HashSet<>(Collections.singleton(""));
         this.prologue = prologue;
         currentArea = areaList.stream().filter(area -> area.getName().equals(startingArea)).findFirst().orElse(areaList.get(0));
         this.saveFile = saveFile;
+        this.lastHealingArea = areaList.stream().filter(area -> area.getName().equals(lastVisited)).findFirst().orElse(areaList.get(0));
+        this.flyOptions = new HashSet<>();
+        for (String areaName : flyOptions) {
+            areaList.stream()
+                   .filter(area -> area.getName().equals(areaName))
+                   .findFirst()
+                   .ifPresent(this.flyOptions::add);
+        }
     }
 
     private void makeWorldMap() {
@@ -527,6 +536,20 @@ public class Game {
         }
         Pokémon wild = getMonFromWildSlot(slot);
         startBattle(wild);
+        if (playerWhitedOut()) {
+            whiteOut();
+        } else {
+            Pokémon caught = player.retrieveTempStorage();
+            if (caught != null) {
+                caught.onCatch();
+                if (player.getParty().size() < MAX_PARTY_SIZE) {
+                    player.getParty().add(caught);
+                } else {
+                    player.getPC().add(caught);
+                }
+            }
+
+        }
     }
 
     /**

@@ -67,4 +67,7 @@ public class Keys {
     public final static String CHANCE_KEY = "chance";
     public final static String FIRST_KEY = "first";
     public final static String SECOND_KEY = "second";
+    public final static String EXTRAS_KEY = "extras";
+    public final static String LAST_VISITED_KEY = "lastVisited";
+    public final static String FLYABLE_KEY = "flyable";
 }

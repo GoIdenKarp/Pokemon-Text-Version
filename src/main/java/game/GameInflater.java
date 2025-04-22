@@ -85,6 +85,8 @@ public class GameInflater {
                 String currentArea = PALLET_TOWN;
                 //If we are not a new game, we never need the prologue
                 List<String> prologue = null;
+                String lastVisited = null;
+                String[] flyOptions = null;
                 if (newGame) {
                     JSONArray prologueObj = (JSONArray) saveObj.get(Keys.PROLOGUE_KEY);
                     prologue = new ArrayList<>(prologueObj);
@@ -92,6 +94,8 @@ public class GameInflater {
                     JSONObject playerObj = (JSONObject) saveObj.get(Keys.PLAYER_KEY);
                     player = parsePlayer(playerObj, factory);
                     currentArea = (String) playerObj.get(Keys.CURR_AREA_KEY);
+                    lastVisited = (String) playerObj.get(Keys.LAST_VISITED_KEY);
+                    flyOptions = (String[]) playerObj.get(Keys.FLYABLE_KEY);
                 }
                 JSONObject areasObj = (JSONObject) saveObj.get(Keys.AREAS_KEY);
                 inflateAreas(gameMap, areasObj);
@@ -99,7 +103,7 @@ public class GameInflater {
                 addConnections(gameMap, connectionsObj);
                 //When parsing areas, I need to check for an "items" key, and if it doesn't exist pass in an empty list for items
                 String saveFile = newGame ? "" : gameFile;
-                Game game = new Game(gameFrame, gameMap, player, prologue, currentArea, saveFile);
+                Game game = new Game(gameFrame, gameMap, player, prologue, currentArea, saveFile, lastVisited, flyOptions);
                 return game;
             }
         } catch (ParseException e) {
