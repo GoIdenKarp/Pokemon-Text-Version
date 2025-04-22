@@ -717,7 +717,7 @@ public class GameFrame extends JFrame{
         }
 
         public void printCatchFail(Pokémon catchTarget, int shakes) {
-            addString(String.format(CATCH_FAIL, catchTarget.getName));
+            addString(String.format(CATCH_FAIL, catchTarget.getSpeciesName()));
             String print;
             if (shakes == 0) {
                 print = NO_SHAKES;
