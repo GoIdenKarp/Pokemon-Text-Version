@@ -55,7 +55,7 @@ public class GameSaver {
      * @return
      */
     public static boolean save(Game game, String saveName) {
-        String filename = saveName + FILETYPE;
+        String filename = saveName.endsWith(FILETYPE) ? saveName : saveName + FILETYPE;
         try {
             String savePath = getSaveFilePath(filename);
             
@@ -92,6 +92,9 @@ public class GameSaver {
         JSONArray flyableArray = new JSONArray();
         flyableArray.addAll(game.getFlyOptions().stream().map(Area::getName).collect(Collectors.toList()));
         extrasObj.put(Keys.FLYABLE_KEY, flyableArray);
+        JSONArray eventFlagsArray = new JSONArray();
+        eventFlagsArray.addAll(game.getEventFlags());
+        extrasObj.put(Keys.EVENT_FLAGS_KEY, eventFlagsArray);
         return extrasObj;
     }
 
@@ -224,9 +227,7 @@ public class GameSaver {
         eventObj.put(Keys.EVENT_FLAGS_KEY, event.getEventFlagsToLift());
         eventObj.put(Keys.RESET_ON_FAIL_KEY, event.resetOnFail());
         eventObj.put(Keys.IGNORE_FAIL_KEY, event.ignoreFail());
-        if (!event.getCanStartFlag().isEmpty()) {
-            eventObj.put(Keys.CAN_START_KEY, event.getCanStartFlag());
-        }
+        eventObj.put(Keys.CAN_START_KEY, event.getCanStartFlag());
         JSONArray JSONmovementFlags = new JSONArray();
         for (MovementFlag movementFlag : event.getMovementFlagsToLift()) {
             JSONArray movementFlagArray = new JSONArray();

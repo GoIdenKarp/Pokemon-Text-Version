@@ -33,7 +33,7 @@ public class GameEvent {
         this.runningEvent = masterList;
         this.movementFlagsToLift = movementFlagsToLift;
         this.eventFlagsToLift = eventFlagsToLift;
-        this.canStartFlag = null;
+        this.canStartFlag = "";
         this.resetOnFail = resetOnFail;
         this.ignoreFail = ignoreFail;
     }

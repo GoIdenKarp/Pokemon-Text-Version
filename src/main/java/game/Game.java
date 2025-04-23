@@ -84,7 +84,7 @@ public class Game {
         flyOptions.add(currentArea);
     }
 
-    public Game(GameFrame gameFrame, List<Area> areaList, Player player, List<String> prologue, String startingArea, String saveFile, String lastVisited, String[] flyOptions) {
+    public Game(GameFrame gameFrame, List<Area> areaList, Player player, List<String> prologue, String startingArea, String saveFile, String lastVisited, Set<String> flyOptions, Set<String> eventFlags) {
         this.gameFrame = gameFrame;
         factory = new PokémonFactory(gameFrame.getInputHelper(), gameFrame.getGamePrinter());
         this.areaList = areaList;
@@ -95,13 +95,8 @@ public class Game {
         currentArea = areaList.stream().filter(area -> area.getName().equals(startingArea)).findFirst().orElse(areaList.get(0));
         this.saveFile = saveFile;
         this.lastHealingArea = areaList.stream().filter(area -> area.getName().equals(lastVisited)).findFirst().orElse(areaList.get(0));
-        this.flyOptions = new HashSet<>();
-        for (String areaName : flyOptions) {
-            areaList.stream()
-                   .filter(area -> area.getName().equals(areaName))
-                   .findFirst()
-                   .ifPresent(this.flyOptions::add);
-        }
+        this.flyOptions = flyOptions;
+        this.eventFlags = eventFlags;
     }
 
     private void makeWorldMap() {
@@ -686,5 +681,9 @@ public class Game {
 
     public Set<Area> getFlyOptions() {
         return flyOptions;
+    }
+
+    public Set<String> getEventFlags() {
+        return eventFlags;
     }
 }

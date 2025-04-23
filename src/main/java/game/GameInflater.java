@@ -86,7 +86,8 @@ public class GameInflater {
                 //If we are not a new game, we never need the prologue
                 List<String> prologue = null;
                 String lastVisited = "";
-                String[] flyOptions = new String[0];
+                HashSet<String> flyOptions = new HashSet<>();
+                Set<String> eventFlags = new HashSet<>(Collections.singleton(""));
                 if (newGame) {
                     JSONArray prologueObj = (JSONArray) saveObj.get(Keys.PROLOGUE_KEY);
                     prologue = new ArrayList<>(prologueObj);
@@ -97,18 +98,22 @@ public class GameInflater {
                     JSONObject extrasObj = (JSONObject) saveObj.get(Keys.EXTRAS_KEY);
                     lastVisited = (String) extrasObj.get(Keys.LAST_VISITED_KEY);
                     JSONArray flyOptionsArray = (JSONArray) extrasObj.get(Keys.FLYABLE_KEY);
-                    flyOptions = new String[flyOptionsArray.size()];
-                    for (int i = 0; i < flyOptionsArray.size(); i++) {
-                        flyOptions[i] = (String) flyOptionsArray.get(i);
+                    for (Object option : flyOptionsArray) {
+                        flyOptions.add((String) option);
+                    }
+                    JSONArray eventFlagsArray = (JSONArray) extrasObj.get(Keys.EVENT_FLAGS_KEY);
+                    for (Object flag : eventFlagsArray) {
+                        eventFlags.add((String) flag);
                     }
                 }
                 JSONObject areasObj = (JSONObject) saveObj.get(Keys.AREAS_KEY);
+                //When parsing areas, I need to check for an "items" key, and if it doesn't exist pass in an empty list for items
                 inflateAreas(gameMap, areasObj);
                 JSONArray connectionsObj = (JSONArray) saveObj.get(Keys.CONNECTIONS_KEY);
                 addConnections(gameMap, connectionsObj);
-                //When parsing areas, I need to check for an "items" key, and if it doesn't exist pass in an empty list for items
-                String saveFile = newGame ? "" : gameFile;
-                Game game = new Game(gameFrame, gameMap, player, prologue, currentArea, saveFile, lastVisited, flyOptions);
+                String saveFile = newGame ? "" : gameFile.split("\\.")[0];
+                System.out.println("FOO1 eventFlags: " + eventFlags);
+                Game game = new Game(gameFrame, gameMap, player, prologue, currentArea, saveFile, lastVisited, flyOptions, eventFlags);
                 return game;
             }
         } catch (ParseException e) {
