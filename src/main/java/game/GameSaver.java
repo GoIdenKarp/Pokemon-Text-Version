@@ -89,7 +89,9 @@ public class GameSaver {
     private static JSONObject writeExtras(Game game) {
         JSONObject extrasObj = new JSONObject();
         extrasObj.put(Keys.LAST_VISITED_KEY, game.getLastHealingArea().getName());
-        extrasObj.put(Keys.FLYABLE_KEY, game.getFlyOptions().stream().map(Area::getName).toArray(String[]::new));
+        JSONArray flyableArray = new JSONArray();
+        flyableArray.addAll(game.getFlyOptions().stream().map(Area::getName).collect(Collectors.toList()));
+        extrasObj.put(Keys.FLYABLE_KEY, flyableArray);
         return extrasObj;
     }
 

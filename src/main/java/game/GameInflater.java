@@ -85,8 +85,8 @@ public class GameInflater {
                 String currentArea = PALLET_TOWN;
                 //If we are not a new game, we never need the prologue
                 List<String> prologue = null;
-                String lastVisited = null;
-                String[] flyOptions = null;
+                String lastVisited = "";
+                String[] flyOptions = new String[0];
                 if (newGame) {
                     JSONArray prologueObj = (JSONArray) saveObj.get(Keys.PROLOGUE_KEY);
                     prologue = new ArrayList<>(prologueObj);
@@ -94,8 +94,13 @@ public class GameInflater {
                     JSONObject playerObj = (JSONObject) saveObj.get(Keys.PLAYER_KEY);
                     player = parsePlayer(playerObj, factory);
                     currentArea = (String) playerObj.get(Keys.CURR_AREA_KEY);
-                    lastVisited = (String) playerObj.get(Keys.LAST_VISITED_KEY);
-                    flyOptions = (String[]) playerObj.get(Keys.FLYABLE_KEY);
+                    JSONObject extrasObj = (JSONObject) saveObj.get(Keys.EXTRAS_KEY);
+                    lastVisited = (String) extrasObj.get(Keys.LAST_VISITED_KEY);
+                    JSONArray flyOptionsArray = (JSONArray) extrasObj.get(Keys.FLYABLE_KEY);
+                    flyOptions = new String[flyOptionsArray.size()];
+                    for (int i = 0; i < flyOptionsArray.size(); i++) {
+                        flyOptions[i] = (String) flyOptionsArray.get(i);
+                    }
                 }
                 JSONObject areasObj = (JSONObject) saveObj.get(Keys.AREAS_KEY);
                 inflateAreas(gameMap, areasObj);
