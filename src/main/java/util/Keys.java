@@ -53,6 +53,8 @@ public class Keys {
     public final static String STATS_KEY = "stats";
     public final static String CURR_HP_KEY = "currHP";
     public final static String CURR_XP_KEY = "currXP";
+    public final static String CURR_PP_KEY = "currPP";
+    public final static String CURR_MAX_PP_KEY = "currMaxPP";
     public final static String CAN_START_KEY = "canStart";
     public final static String AREAS_KEY = "areas";
     public final static String CURR_AREA_KEY = "currArea";

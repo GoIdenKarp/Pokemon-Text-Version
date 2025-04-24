@@ -85,10 +85,16 @@ public abstract class Move{
         currPP = currMaxPP;
     }
 
+    public void setCurrPP(int pp) {
+        currPP = pp;
+    }
+
+    public void setCurrMaxPP(int maxPP) {
+        currMaxPP = maxPP;
+    }
+
     public String toString() {
         return getName();
     }
-
-
 
 }

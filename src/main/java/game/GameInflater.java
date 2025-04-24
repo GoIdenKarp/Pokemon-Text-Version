@@ -5,7 +5,13 @@ import areas.ItemBall;
 import enums.MoveRequirement;
 import enums.Owner;
 import enums.Species;
+import enums.Nature;
+import enums.Ability;
+import enums.Status;
+import enums.Gender;
 import events.*;
+import moves.Move;
+import moves.MoveMapper;
 import exceptions.BadNameException;
 import items.Bag;
 import items.Item;
@@ -394,11 +400,45 @@ public class GameInflater {
         return toReturn;
     }
 
+    //* A "rich" mon is a player-owned one. This means we have to keep track of EVs, ability, current moves and PP, etc.*/
     private static Pokémon parseRichMon(JSONObject monObj, PokémonFactory factory) throws BadNameException {
         String speciesString = (String) monObj.get(Keys.SPECIES_KEY);
         Species species = Species.map(speciesString);
-        String name = (String) monObj.get(Keys.NAME_KEY);
         int level = ((Long) monObj.get(Keys.LEVEL_KEY)).intValue();
-        return factory.makePokémon(species, level, Owner.PLAYER);
+        Pokémon mon = factory.makePokémon(species, level, Owner.PLAYER);
+        String name = (String) monObj.get(Keys.NAME_KEY);
+        mon.setNickname(name);
+        int nature = ((Long) monObj.get(Keys.NATURE_KEY)).intValue();
+        mon.setNature(Nature.valueOf(nature));
+        int ability = ((Long) monObj.get(Keys.ABILITY_KEY)).intValue();
+        mon.setAbility(Ability.valueOf(ability));
+        int status = ((Long) monObj.get(Keys.STATUS_KEY)).intValue();
+        mon.setStatus(Status.valueOf(status));
+        int gender = ((Long) monObj.get(Keys.GENDER_KEY)).intValue();
+        mon.setGender(Gender.valueOf(gender));
+        JSONArray evsArray = (JSONArray) monObj.get(Keys.EVS_KEY);
+        int[] evs = new int[6];
+        for (int i = 0; i < 6; i++) {
+            evs[i] = ((Long) evsArray.get(i)).intValue();
+        }
+        mon.setEVs(evs);
+        int currHP = ((Long) monObj.get(Keys.CURR_HP_KEY)).intValue();
+        mon.setCurrentHP(currHP);
+        int currXP = ((Long) monObj.get(Keys.CURR_XP_KEY)).intValue();
+        mon.setCurrentXP(currXP);
+        JSONArray moveList = (JSONArray) monObj.get(Keys.MOVESET_KEY);
+        List<Move> moveSet = new ArrayList<>();
+        for (Object moveObj : moveList) {
+            JSONObject moveJSON = (JSONObject) moveObj;
+            String moveName = (String) moveJSON.get(Keys.NAME_KEY);
+            Move move = MoveMapper.map(moveName);
+            int currPP = ((Long) moveJSON.get(Keys.CURR_PP_KEY)).intValue();
+            int currMaxPP = ((Long) moveJSON.get(Keys.CURR_MAX_PP_KEY)).intValue();
+            move.setCurrPP(currPP);
+            move.setCurrMaxPP(currMaxPP);
+            moveSet.add(move);
+        }
+        mon.setMoveSet(moveSet);
+        return mon;
     }
 }

@@ -180,8 +180,6 @@ public abstract class Pokémon implements Cloneable {
         }
     }
 
-
-
     public void setStatus(Status status) {
         this.status = status;
         if (status == Status.ASLEEP) {
@@ -418,7 +416,7 @@ public abstract class Pokémon implements Cloneable {
 
     }
 
-    protected void setCurrentHP(int hp) {
+    public void setCurrentHP(int hp) {
         if (hp <= 0) {
             currentHP = 0;
             status = Status.FAINTED;
@@ -581,6 +579,10 @@ public abstract class Pokémon implements Cloneable {
         }
     }
 
+    public void setEVs(int[] evs) {
+        this.EVs = evs;
+    }
+
     public int getUniqueID() {
         return uniqueID;
     }
@@ -601,7 +603,21 @@ public abstract class Pokémon implements Cloneable {
         return nickname;
     }
 
+    public boolean hasNickname() {
+        return this.nickname != null && !this.nickname.equals(this.getSpeciesName());
+    }
 
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void setNature(Nature nature) {
+        this.nature = nature;
+    }
+
+    public void setCurrentXP(int xp) {
+        this.currentXP = xp;
+    }
 
 }
 
