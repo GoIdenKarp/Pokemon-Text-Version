@@ -84,18 +84,23 @@ public class Game {
         flyOptions.add(currentArea);
     }
 
-    public Game(GameFrame gameFrame, List<Area> areaList, Player player, List<String> prologue, String startingArea, String saveFile, String lastVisited, Set<String> flyOptions, Set<String> eventFlags) {
+    public Game(GameFrame gameFrame, List<Area> areaList, Player player, List<String> prologue, String startingArea, String saveFile, String lastVisited, List<String> flyOptions, Set<String> eventFlags) {
         this.gameFrame = gameFrame;
         factory = new PokémonFactory(gameFrame.getInputHelper(), gameFrame.getGamePrinter());
         this.areaList = areaList;
         makeWorldMap();
         this.player = player;
-        eventFlags  = new HashSet<>(Collections.singleton(""));
         this.prologue = prologue;
         currentArea = areaList.stream().filter(area -> area.getName().equals(startingArea)).findFirst().orElse(areaList.get(0));
         this.saveFile = saveFile;
         this.lastHealingArea = areaList.stream().filter(area -> area.getName().equals(lastVisited)).findFirst().orElse(areaList.get(0));
-        this.flyOptions = flyOptions;
+        this.flyOptions = new HashSet<>();
+        for (String areaName : flyOptions) {
+            Area area = worldMap.get(areaName);
+            if (area != null) {
+                this.flyOptions.add(area);
+            }
+        }
         this.eventFlags = eventFlags;
     }
 

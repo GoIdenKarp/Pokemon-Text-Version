@@ -86,7 +86,7 @@ public class GameInflater {
                 //If we are not a new game, we never need the prologue
                 List<String> prologue = null;
                 String lastVisited = "";
-                HashSet<String> flyOptions = new HashSet<>();
+                List<String> flyOptions = new ArrayList<>();
                 Set<String> eventFlags = new HashSet<>(Collections.singleton(""));
                 if (newGame) {
                     JSONArray prologueObj = (JSONArray) saveObj.get(Keys.PROLOGUE_KEY);
@@ -112,7 +112,6 @@ public class GameInflater {
                 JSONArray connectionsObj = (JSONArray) saveObj.get(Keys.CONNECTIONS_KEY);
                 addConnections(gameMap, connectionsObj);
                 String saveFile = newGame ? "" : gameFile.split("\\.")[0];
-                System.out.println("FOO1 eventFlags: " + eventFlags);
                 Game game = new Game(gameFrame, gameMap, player, prologue, currentArea, saveFile, lastVisited, flyOptions, eventFlags);
                 return game;
             }
