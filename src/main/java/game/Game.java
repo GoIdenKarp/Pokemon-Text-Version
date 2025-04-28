@@ -44,6 +44,7 @@ public class Game {
     private static final String ITEMS_OPTION = "Search for Items";
     private static final String TRAINERS_OPTION = "Battle Trainers";
     private static final String HEALING_OPTION = "Heal";
+    private static final String PARTY_OPTION = "View Party";
     private static final String PC_OPTION = "Use the PC";
     private static final String MART_OPTION = "Go Shopping";
     private static final String TALKING_OPTION = "Talk";
@@ -135,6 +136,9 @@ public class Game {
         if (eventFlags.contains(HAS_DEX_FLAG)) {
             areaOptions.add(POKEDEX_OPTION);
         }
+        if (player.getParty().size() > 0) {
+            areaOptions.add(PARTY_OPTION);
+        }
         if (currentArea.getTrainers() != null && currentArea.getTrainers().size() > 0) {
             areaOptions.add(TRAINERS_OPTION);
         }
@@ -209,10 +213,17 @@ public class Game {
             case POKEDEX_OPTION:
                 viewPokédex();
                 break;
+            case PARTY_OPTION:
+                viewParty();
+                break;
             default:
                 gameFrame.getGamePrinter().printNotYetImplemented();
                 break;
         }
+    }
+
+    private void viewParty() {
+        gameFrame.getInputHelper().displayParty(player.getParty());
     }
 
     private void viewPokédex() {

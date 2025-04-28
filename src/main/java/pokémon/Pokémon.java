@@ -366,8 +366,8 @@ public abstract class Pokémon implements Cloneable {
         this.currentXP = mon.getCurrentXP();
         this.nature = mon.getNature();
         this.stats = calculateStats();
-        float previousHPPercent = (float)mon.getCurrentHP()/ (float)mon.getStats()[HP_INDEX];
-        this.currentHP = (int) previousHPPercent*this.getStats()[HP_INDEX];
+        float previousHPPercent = (float)mon.getCurrentHP()/ (float)mon.getMaxHP();
+        this.currentHP = (int) previousHPPercent*this.getMaxHP();
         abilitySlot = mon.getAbilitySlot();
         ability = getPotentialAbilities()[abilitySlot];
         status = mon.getStatus();
@@ -548,6 +548,10 @@ public abstract class Pokémon implements Cloneable {
         sleepTimer = clone.getSleepTimer();
         evolveTrigger = clone.getEvolveTrigger();
         callBack();
+    }
+
+    public int getMaxHP() {
+        return stats[HP_INDEX];
     }
 
     public Gender getGender() {

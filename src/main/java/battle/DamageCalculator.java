@@ -266,7 +266,7 @@ public class DamageCalculator {
         Ability ability = action.getUserSlot().getPokémon().getAbility();
         Move move = action.getMove();
         double currHP = (double)action.getUserSlot().getPokémon().getCurrentHP();
-        double maxHP = (double) action.getUserSlot().getPokémon().getStats()[HP_INDEX];
+        double maxHP = (double) action.getUserSlot().getPokémon().getMaxHP();
         double hpPercentage = currHP/maxHP;
         if (hpPercentage <= .333) {
             if (ability == Ability.BLAZE && move.getType() == Type.FIRE) {

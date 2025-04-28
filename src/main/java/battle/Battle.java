@@ -446,9 +446,9 @@ public class Battle implements Comparator<Action>{
                 statusBonus = 1;
                 break;
         }
-        double a = (3 * catchTarget.getStats()[HP_INDEX] - 2 * catchTarget.getCurrentHP());
+        double a = (3 * catchTarget.getMaxHP() - 2 * catchTarget.getCurrentHP());
         a *= catchTarget.getCatchRate() * ballModifier;
-        a /= (3 * catchTarget.getStats()[HP_INDEX]);
+        a /= (3 * catchTarget.getMaxHP());
         a *= statusBonus;
         double shakeProbability = 1048560 / Math.sqrt(Math.sqrt(16711680/a));
         for (int i = 1; i <= SHAKE_CHECKS; i++) {
@@ -1400,7 +1400,7 @@ public class Battle implements Comparator<Action>{
                     attemptToChangeStat(action.getUserSlot(), SPATK_INDEX, growthAmt, true);
                     break;
                 case RESTORE_SUN:
-                    int maxHP = action.getUserSlot().getPokémon().getStats()[HP_INDEX];
+                    int maxHP = action.getUserSlot().getPokémon().getMaxHP();
                     double percentage = (weather == Weather.NONE) ? .5 : (weather == Weather.SUN) ? .666 : .25;
                     int toRestore = (int)(Math.floor((double) maxHP*percentage));
                     battlePrinter.printRestoreHP(action.getUserSlot().getPokémon(), toRestore);
@@ -1429,7 +1429,7 @@ public class Battle implements Comparator<Action>{
                     battlePrinter.printTailwindActivate(action.getUserSlot());
                     break;
                 case RESTORE:
-                    int restoreAmt = action.getUserSlot().getPokémon().getStats()[HP_INDEX]/2;
+                    int restoreAmt = action.getUserSlot().getPokémon().getMaxHP()/2;
                     battlePrinter.printRestoreHP(action.getUserSlot().getPokémon(), restoreAmt);
                     action.getUserSlot().getPokémon().heal(restoreAmt);
                     break;
@@ -2296,7 +2296,7 @@ public class Battle implements Comparator<Action>{
     }
 
     private void leechSeedDamage(BattleSlot slot) {
-        int eighthHP = (int) ((double) slot.getPokémon().getStats()[HP_INDEX] / 8.0);
+        int eighthHP = (int) ((double) slot.getPokémon().getMaxHP() / 8.0);
         battlePrinter.printLeechSeedActivate(slot.getPokémon());
         inflictDamage(slot, eighthHP);
         if (slot.getLeachingSlot().getPokémon() != null && !slot.getLeachingSlot().isFainted()) {
@@ -2310,7 +2310,7 @@ public class Battle implements Comparator<Action>{
      * @param slot The BattleSlot to be checked for binding effects
      */
     private void bindingDamage(BattleSlot slot) {
-        int eighthHP = (int) ((double) slot.getPokémon().getStats()[HP_INDEX] / 8.0);
+        int eighthHP = (int) ((double) slot.getPokémon().getMaxHP() / 8.0);
         List<BindingEffect> removedEffects = new ArrayList<>();
         for (BindingEffect effect : slot.getBindingEffects().keySet()) {
             int count = slot.getBindingEffects().get(effect);
@@ -2340,7 +2340,7 @@ public class Battle implements Comparator<Action>{
      */
     private void statusDamage(BattleSlot slot) {
         Pokémon mon = slot.getPokémon();
-        int eighthHP = (int) ((double) mon.getStats()[HP_INDEX] / 8.0);
+        int eighthHP = (int) ((double) mon.getMaxHP() / 8.0);
         switch(mon.getStatus()) {
             case BURNED:
                 battlePrinter.printBurnDamage(mon);
@@ -2352,7 +2352,7 @@ public class Battle implements Comparator<Action>{
                 break;
             case BADLY_POISONED:
                 int toxicCounter = mon.getToxicCounter();
-                int dmg = ((toxicCounter/16)*mon.getStats()[HP_INDEX]);
+                int dmg = ((toxicCounter/16)*mon.getMaxHP());
                 battlePrinter.printPoisonDamage(mon);
                 inflictDamage(slot, dmg);
                 mon.incrementToxicCounter();
@@ -2388,7 +2388,7 @@ public class Battle implements Comparator<Action>{
         for (BattleSlot slot : getAllActiveSlots()) {
             if (!weatherImmune(weather, slot.getPokémon())) {
                 battlePrinter.printWeatherDamage(slot.getPokémon(), weather);
-                int dmg = slot.getPokémon().getStats()[HP_INDEX] / 16;
+                int dmg = slot.getPokémon().getMaxHP() / 16;
                 inflictDamage(slot, dmg);
             }
         }

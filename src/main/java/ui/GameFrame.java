@@ -811,6 +811,95 @@ public class GameFrame extends JFrame{
         }
     }
 
+    private void showPokemonSummaryDialog(Pokémon mon) {
+        JDialog summaryDialog = new JDialog(this, "Pokémon Summary", true);
+        summaryDialog.setLayout(new BorderLayout());
+
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(16, 32, 16, 32));
+        mainPanel.setPreferredSize(new Dimension(400, 380)); // Wider and taller
+
+        // Name and level
+        JLabel nameLabel = new JLabel("<html><b>Name:</b> " + (mon.hasNickname() ? mon + " / " + mon.getSpeciesName() : mon.getSpeciesName()) + "</html>");
+        JLabel levelLabel = new JLabel("<html><b>Level:</b> " + mon.getLevel() + "</html>");
+        nameLabel.setAlignmentX(JLabel.LEFT_ALIGNMENT);
+        levelLabel.setAlignmentX(JLabel.LEFT_ALIGNMENT);
+
+        mainPanel.add(nameLabel);
+        mainPanel.add(levelLabel);
+
+        // Spacing
+        mainPanel.add(Box.createVerticalStrut(12));
+
+        // Stats panel
+        JLabel statsHeader = new JLabel("<html><b>Stats:</b></html>");
+        statsHeader.setAlignmentX(JLabel.LEFT_ALIGNMENT);
+        mainPanel.add(statsHeader);
+
+        JPanel statsPanel = new JPanel();
+        statsPanel.setLayout(new GridLayout(0, 2, 8, 4));
+        statsPanel.setAlignmentX(JPanel.LEFT_ALIGNMENT);
+        String[] statNames = {"HP", "Attack", "Defense", "Sp. Atk", "Sp. Def", "Speed"};
+        int[] stats = mon.getStats();
+        for (int i = 0; i < stats.length; i++) {
+            String statName = statNames[i];
+            String statValue = (i == 0)
+                ? stats[i] + " (Current: " + mon.getCurrentHP() + ")"
+                : String.valueOf(stats[i]);
+            JLabel statNameLabel = new JLabel(statName + ":");
+            statNameLabel.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 13));
+            JLabel statValueLabel = new JLabel(statValue);
+            statValueLabel.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 13));
+            statsPanel.add(statNameLabel);
+            statsPanel.add(statValueLabel);
+        }
+        statsPanel.setMaximumSize(new Dimension(380, 100));
+        mainPanel.add(statsPanel);
+
+        // Spacing
+        mainPanel.add(Box.createVerticalStrut(12));
+
+        // Moves panel
+        JLabel movesHeader = new JLabel("<html><b>Moves:</b></html>");
+        movesHeader.setAlignmentX(JLabel.LEFT_ALIGNMENT);
+        mainPanel.add(movesHeader);
+
+        JPanel movesPanel = new JPanel();
+        movesPanel.setLayout(new BoxLayout(movesPanel, BoxLayout.Y_AXIS));
+        movesPanel.setAlignmentX(JPanel.LEFT_ALIGNMENT);
+        int moveCount = 0;
+        for (moves.Move move : mon.getMoveSet()) {
+            JLabel moveLabel = new JLabel("• " + move.getName() + " (" + move.getCurrPP() + "/" + move.getCurrMaxPP() + ")");
+            moveLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 13));
+            movesPanel.add(moveLabel);
+            moveCount++;
+        }
+        // Add empty labels if less than 4 moves, to keep height consistent
+        for (int i = moveCount; i < 4; i++) {
+            movesPanel.add(Box.createVerticalStrut(18));
+        }
+        movesPanel.setMaximumSize(new Dimension(380, 90));
+        mainPanel.add(movesPanel);
+
+        // Add vertical glue to push the close button to the bottom
+        mainPanel.add(Box.createVerticalGlue());
+
+        // Close button
+        JButton closeBtn = new JButton("Close");
+        closeBtn.addActionListener(e -> summaryDialog.dispose());
+        JPanel closePanel = new JPanel();
+        closePanel.add(closeBtn);
+        mainPanel.add(closePanel);
+
+        summaryDialog.add(mainPanel, BorderLayout.CENTER);
+        summaryDialog.pack();
+        summaryDialog.setMinimumSize(new Dimension(400, 380));
+        summaryDialog.setResizable(false); // Optional: keep layout consistent
+        summaryDialog.setLocationRelativeTo(this);
+        summaryDialog.setVisible(true);
+    }
+
 
     public class InputHelper {
 
@@ -818,7 +907,6 @@ public class GameFrame extends JFrame{
 
         public final String[] DIALOG_OPTIONS = {"OK"};
 
-        public final String[] areaOptions = {"Move", "Talk", "Story", "Search for Items", "Look for Pokémon", "Battle Trainers"};
         private final String[] MART_OPTIONS = {"Buy", "Sell", "Exit"};
 
         private static final String ALLY = "Ally";
@@ -851,13 +939,6 @@ public class GameFrame extends JFrame{
         }
 
         public String getString(String title, String message) {
-//            String response = JOptionPane.showInputDialog(GameFrame.this, message, title);
-//            while (response.isEmpty()) {
-//                JOptionPane.showMessageDialog(GameFrame.this,"You must input something.");
-//                response = JOptionPane.showInputDialog(GameFrame.this, message, title);
-//
-//            }
-//            return response;
 
             JPanel jPanel = new JPanel();
             JLabel label = new JLabel(message);
@@ -1120,6 +1201,97 @@ public class GameFrame extends JFrame{
 
         //TODO
         private void sellToMart(Player player) {
+        }
+
+        private void updatePartyDisplay(JPanel mainPanel, ArrayList<Pokémon> party, JDialog dialog) {
+            mainPanel.removeAll();
+            
+            // Add a panel for each Pokémon
+            for (int i = 0; i < party.size(); i++) {
+                final int index = i;
+                Pokémon mon = party.get(i);
+                
+                JPanel monPanel = new JPanel(new GridBagLayout());
+                GridBagConstraints gbc = new GridBagConstraints();
+                gbc.insets = new java.awt.Insets(2, 2, 2, 2);
+                gbc.gridy = 0;
+                gbc.gridx = 0;
+                gbc.anchor = GridBagConstraints.WEST;
+                
+                // Pokémon info label
+                String monInfo = (i + 1) + ". ";
+                if (mon.hasNickname()) {
+                    monInfo += mon + "/" + mon.getSpeciesName();
+                } else {
+                    monInfo += mon;
+                }
+                monInfo += " (Lv. " + mon.getLevel() + ") HP: " + mon.getCurrentHP() + "/" + mon.getStats()[0];
+                JLabel infoLabel = new JLabel(monInfo);
+                infoLabel.setPreferredSize(new java.awt.Dimension(220, 25)); // Fixed width for alignment
+                monPanel.add(infoLabel, gbc);
+                
+                // Summary button
+                gbc.gridx = 1;
+                JButton summaryBtn = new JButton("Summary");
+                summaryBtn.addActionListener(e -> showPokemonSummaryDialog(mon));
+                monPanel.add(summaryBtn, gbc);
+                
+                // Move up button
+                gbc.gridx = 2;
+                JButton upBtn = new JButton("↑");
+                upBtn.setEnabled(i > 0); // Disable for first Pokémon
+                upBtn.addActionListener(e -> {
+                    // Swap with Pokémon above
+                    Pokémon temp = party.get(index);
+                    party.set(index, party.get(index - 1));
+                    party.set(index - 1, temp);
+                    updatePartyDisplay(mainPanel, party, dialog);
+                });
+                monPanel.add(upBtn, gbc);
+                
+                // Move down button
+                gbc.gridx = 3;
+                JButton downBtn = new JButton("↓");
+                downBtn.setEnabled(i < party.size() - 1); // Disable for last Pokémon
+                downBtn.addActionListener(e -> {
+                    // Swap with Pokémon below
+                    Pokémon temp = party.get(index);
+                    party.set(index, party.get(index + 1));
+                    party.set(index + 1, temp);
+                    updatePartyDisplay(mainPanel, party, dialog);
+                });
+                monPanel.add(downBtn, gbc);
+                
+                mainPanel.add(monPanel);
+            }
+            
+            // Add a close button at the bottom
+            JButton closeBtn = new JButton("Close");
+            closeBtn.addActionListener(e -> dialog.dispose());
+            JPanel closePanel = new JPanel();
+            closePanel.add(closeBtn);
+            mainPanel.add(closePanel);
+            
+            mainPanel.revalidate();
+            mainPanel.repaint();
+        }
+
+        public void displayParty(ArrayList<Pokémon> party) {
+            JDialog dialog = new JDialog(GameFrame.this, "Your Party", true);
+            dialog.setLayout(new BoxLayout(dialog.getContentPane(), BoxLayout.Y_AXIS));
+            
+            // Create a panel to hold all Pokémon panels
+            JPanel mainPanel = new JPanel();
+            mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+            dialog.add(mainPanel);
+            
+            // Initial display
+            updatePartyDisplay(mainPanel, party, dialog);
+            
+            // Set dialog properties and show it
+            dialog.pack();
+            dialog.setLocationRelativeTo(GameFrame.this);
+            dialog.setVisible(true);
         }
     }
 
