@@ -416,6 +416,10 @@ public abstract class Pokémon implements Cloneable {
 
     }
 
+    public int getEXPToNextLevel() {
+        return getXPAtLevel(level + 1, getGrowthRate()) - currentXP;
+    }
+
     public void setCurrentHP(int hp) {
         if (hp <= 0) {
             currentHP = 0;
