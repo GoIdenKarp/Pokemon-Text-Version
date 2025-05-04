@@ -1,7 +1,17 @@
+-- Want to add up to Pewter City
+    -- mart
+    -- bag
+    -- Gyms
+        -- How do badges affect things?
+            -- e.g. mart selection
+    -- pokédex implementation?
+    -- battle mode improvements
+        -- ensure keyboard navigation
+
 - Continue to add Pokémon
     -- Remember to add new mons to PokémonFactory and Species
 
-- Continue to refine Battle(Redux).java
+- Continue to refine Battle.java
     -- ability/effect implementations
         -- as i add more moves/mons
         -- remember to add these moves to movesets
@@ -19,26 +29,9 @@
                  -- maybe assign each battle slot a turn number and see whose turn is first?
     -- awardEXP is a little wonky, but it should work for now
 
--- Saving and loading the game
-    -- This works now!
-    --rework generating regions
-        -- Eventually Gyms are gonna have to be a thing
-        -- I have no way of accounting for the different kinds of Fishing Rods
-
--- Player should have a way to check their party
-
--- Want to add up to Pewter City
-
--- Player now has a field for a caught Pokémon
-    -- check for this field to have a value after battle -> move to Game's PC field
 
 -- Infrastructure for mart is all set up, just need to actually write the code to buy and sell
 
 -- Items
 
--- Note to self: Side was setting Slot's Actions to null at the end of each turn. This was breaking the extra-move turns,
-      so I disabled it. I'm not sure it's needed, but I should look out for any bugs it could be causing.
-
 -- Implement scrolling text for the game frame
-
--- Need to store player's last-visted town, or else whiting out won't work on load

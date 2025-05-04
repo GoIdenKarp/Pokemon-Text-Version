@@ -13,9 +13,13 @@ import moves.Move;
 import moves.ChargeMove;
 import pokémon.Pokémon;
 import trainer.Trainer;
+import util.StringUtils;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.KeyAdapter;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -866,7 +870,6 @@ public class GameFrame extends JFrame{
             JLabel statValueLabel = new JLabel(statValue);
             statValueLabel.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 13));
             
-            // Left-align names, right-align values
             statNameLabel.setHorizontalAlignment(SwingConstants.LEFT);
             statValueLabel.setHorizontalAlignment(SwingConstants.LEFT);
             
@@ -890,16 +893,52 @@ public class GameFrame extends JFrame{
         mainPanel.add(movesHeader);
         mainPanel.add(Box.createVerticalStrut(5));
 
+        // Add a note for discoverability
+        JLabel movesNote = new JLabel("<html><i>Hover over a move's name for details</i></html>");
+        movesNote.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 11));
+        movesNote.setAlignmentX(Component.LEFT_ALIGNMENT);
+        mainPanel.add(movesNote);
+        mainPanel.add(Box.createVerticalStrut(5));
+
         JPanel movesPanel = new JPanel();
         movesPanel.setLayout(new BoxLayout(movesPanel, BoxLayout.Y_AXIS));
         movesPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
         
-        // Add moves (if any)
+        // Configure tooltip behavior
+        ToolTipManager toolTipManager = ToolTipManager.sharedInstance();
+        toolTipManager.setInitialDelay(0); // Show immediately
+        toolTipManager.setDismissDelay(10000); // Stay visible for 10 seconds
+        toolTipManager.setReshowDelay(0); // Show immediately when moving between components
+        
         for (moves.Move move : mon.getMoveSet()) {
-            JLabel moveLabel = new JLabel("• " + move.getName() + " (" + move.getCurrPP() + "/" + move.getCurrMaxPP() + ")");
+            JPanel moveRow = new JPanel();
+            moveRow.setLayout(new BoxLayout(moveRow, BoxLayout.X_AXIS));
+            moveRow.setOpaque(false);
+
+            // Underlined move name label
+            JLabel moveLabel = new JLabel("<html><u>" + move.getName() + "</u> (" + move.getCurrPP() + "/" + move.getCurrMaxPP() + ")</html>");
             moveLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 13));
-            moveLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-            movesPanel.add(moveLabel);
+            moveLabel.setAlignmentY(Component.CENTER_ALIGNMENT);
+
+            // Tooltip text
+            String tooltipText = String.format("<html><b>%s</b><br>" +
+                    "Type: %s<br>" +
+                    "Category: %s<br>" +
+                    "Power: %d<br>" +
+                    "Accuracy: %d%%<br>" +
+                    "Description: %s</html>",
+                    move.getName(),
+                    StringUtils.formatEnumValue(move.getType().toString()),
+                    StringUtils.formatEnumValue(move.getCategory().toString()),
+                    move.getBasePower(),
+                    move.getAccuracy(),
+                    move.getDescription());
+
+            moveLabel.setToolTipText(tooltipText);
+
+            moveRow.add(moveLabel);
+            moveRow.add(Box.createHorizontalGlue());
+            movesPanel.add(moveRow);
             movesPanel.add(Box.createVerticalStrut(2));
         }
         mainPanel.add(movesPanel);
@@ -921,15 +960,41 @@ public class GameFrame extends JFrame{
             summaryDialog.dispose();
             showPokemonSummaryDialog(party.get(currentIndex - 1), party);
         });
+        prevBtn.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER && prevBtn.isEnabled()) {
+                    summaryDialog.dispose();
+                    showPokemonSummaryDialog(party.get(currentIndex - 1), party);
+                }
+            }
+        });
         
         JButton closeBtn = new JButton("Close");
         closeBtn.addActionListener(e -> summaryDialog.dispose());
+        closeBtn.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    summaryDialog.dispose();
+                }
+            }
+        });
         
         JButton nextBtn = new JButton("Next");
         nextBtn.setEnabled(currentIndex < party.size() - 1);
         nextBtn.addActionListener(e -> {
             summaryDialog.dispose();
             showPokemonSummaryDialog(party.get(currentIndex + 1), party);
+        });
+        nextBtn.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER && nextBtn.isEnabled()) {
+                    summaryDialog.dispose();
+                    showPokemonSummaryDialog(party.get(currentIndex + 1), party);
+                }
+            }
         });
         
         buttonPanel.add(prevBtn);
@@ -994,31 +1059,119 @@ public class GameFrame extends JFrame{
             gbc.gridx = 1;
             JButton summaryBtn = new JButton("Summary");
             summaryBtn.addActionListener(e -> showPokemonSummaryDialog(mon, party));
+            summaryBtn.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyPressed(KeyEvent e) {
+                    if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                        showPokemonSummaryDialog(mon, party);
+                    }
+                }
+            });
             monPanel.add(summaryBtn, gbc);
             
             // Move up button
             gbc.gridx = 2;
             JButton upBtn = new JButton("↑");
-            upBtn.setEnabled(i > 0); // Disable for first Pokémon
+            upBtn.setEnabled(i > 0);
             upBtn.addActionListener(e -> {
                 // Swap with Pokémon above
                 Pokémon temp = party.get(index);
                 party.set(index, party.get(index - 1));
                 party.set(index - 1, temp);
                 updatePartyDisplay(mainPanel, party, dialog);
+                // Request focus back to the dialog
+                dialog.requestFocus();
+                // Set focus to the first button in the updated display
+                Component[] components = mainPanel.getComponents();
+                if (components.length > 0) {
+                    JPanel firstMonPanel = (JPanel) components[0];
+                    Component[] buttons = firstMonPanel.getComponents();
+                    for (Component button : buttons) {
+                        if (button instanceof JButton) {
+                            button.requestFocusInWindow();
+                            break;
+                        }
+                    }
+                }
+            });
+            upBtn.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyPressed(KeyEvent e) {
+                    if (e.getKeyCode() == KeyEvent.VK_ENTER && upBtn.isEnabled()) {
+                        // Swap with Pokémon above
+                        Pokémon temp = party.get(index);
+                        party.set(index, party.get(index - 1));
+                        party.set(index - 1, temp);
+                        updatePartyDisplay(mainPanel, party, dialog);
+                        // Request focus back to the dialog
+                        dialog.requestFocus();
+                        // Set focus to the first button in the updated display
+                        Component[] components = mainPanel.getComponents();
+                        if (components.length > 0) {
+                            JPanel firstMonPanel = (JPanel) components[0];
+                            Component[] buttons = firstMonPanel.getComponents();
+                            for (Component button : buttons) {
+                                if (button instanceof JButton) {
+                                    button.requestFocusInWindow();
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
             });
             monPanel.add(upBtn, gbc);
             
             // Move down button
             gbc.gridx = 3;
             JButton downBtn = new JButton("↓");
-            downBtn.setEnabled(i < party.size() - 1); // Disable for last Pokémon
+            downBtn.setEnabled(i < party.size() - 1);
             downBtn.addActionListener(e -> {
                 // Swap with Pokémon below
                 Pokémon temp = party.get(index);
                 party.set(index, party.get(index + 1));
                 party.set(index + 1, temp);
                 updatePartyDisplay(mainPanel, party, dialog);
+                // Request focus back to the dialog
+                dialog.requestFocus();
+                // Set focus to the first button in the updated display
+                Component[] components = mainPanel.getComponents();
+                if (components.length > 0) {
+                    JPanel firstMonPanel = (JPanel) components[0];
+                    Component[] buttons = firstMonPanel.getComponents();
+                    for (Component button : buttons) {
+                        if (button instanceof JButton) {
+                            button.requestFocusInWindow();
+                            break;
+                        }
+                    }
+                }
+            });
+            downBtn.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyPressed(KeyEvent e) {
+                    if (e.getKeyCode() == KeyEvent.VK_ENTER && downBtn.isEnabled()) {
+                        // Swap with Pokémon below
+                        Pokémon temp = party.get(index);
+                        party.set(index, party.get(index + 1));
+                        party.set(index + 1, temp);
+                        updatePartyDisplay(mainPanel, party, dialog);
+                        // Request focus back to the dialog
+                        dialog.requestFocus();
+                        // Set focus to the first button in the updated display
+                        Component[] components = mainPanel.getComponents();
+                        if (components.length > 0) {
+                            JPanel firstMonPanel = (JPanel) components[0];
+                            Component[] buttons = firstMonPanel.getComponents();
+                            for (Component button : buttons) {
+                                if (button instanceof JButton) {
+                                    button.requestFocusInWindow();
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
             });
             monPanel.add(downBtn, gbc);
             
@@ -1028,6 +1181,15 @@ public class GameFrame extends JFrame{
         // Add a close button at the bottom
         JButton closeBtn = new JButton("Close");
         closeBtn.addActionListener(e -> dialog.dispose());
+        closeBtn.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    dialog.dispose();
+                }
+            }
+        });
+        
         JPanel closePanel = new JPanel();
         closePanel.add(closeBtn);
         mainPanel.add(closePanel);
@@ -1095,10 +1257,6 @@ public class GameFrame extends JFrame{
                     }
                 }
             }
-
-
-
-
         }
 
         public String getNickname(Pokémon mon) {
@@ -1158,42 +1316,8 @@ public class GameFrame extends JFrame{
 
         }
 
-
-
-
         public int getMoveToBeDeleted(List<Move> moves) {
-//            int choice;
-//            Object[] moveArray = moves.toArray();
-//            while (true) {
-//                choice = JOptionPane.showOptionDialog(GameFrame.this, "Which move should be deleted?",
-//                        "Choose an Option", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, moveArray, moveArray[0]);
-//                if (choice == -1) {
-//                    JOptionPane.showMessageDialog(GameFrame.this,"You must select an option.");
-//                } else {
-//                    break;
-//                }
-//            }
-//            return choice;
-
-//            JPanel jPanel = new JPanel();
-//            JLabel label = new JLabel("Which move should be deleted?");
-//            //Move[] moveArray = moves.toArray(new Move[0]);
-//            JComboBox<Move> jComboBox = new JComboBox<Move>(moves.toArray(new Move[0]););
-//            jPanel.add(label);
-//            jPanel.add(jComboBox);
-//
-//            while(true) {
-//                int selectedOption = JOptionPane.showOptionDialog(GameFrame.this, jPanel, "Choose an option",
-//                        JOptionPane.NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, DIALOG_OPTIONS, DIALOG_OPTIONS[0]);
-//                if (selectedOption != 0) {
-//                    JOptionPane.showMessageDialog(GameFrame.this, "You must select an option.");
-//                } else {
-//                    return String.valueOf(jComboBox.getSelectedItem());
-//                }
-//            }
-
             return getResponseIndexFromOptions(moves, "Choose an option", "Which move should be deleted?");
-
         }
 
         public Pokémon getPokémonToSwitchIn(Pokémon currentMon, ArrayList<Pokémon> pokémon) {
@@ -1243,7 +1367,6 @@ public class GameFrame extends JFrame{
                 }
             }
             return toReturn;
-
         }
 
         public int getBattleChoice(String[] options, Pokémon mon) {
@@ -1369,31 +1492,119 @@ public class GameFrame extends JFrame{
                 gbc.gridx = 1;
                 JButton summaryBtn = new JButton("Summary");
                 summaryBtn.addActionListener(e -> showPokemonSummaryDialog(mon, party));
+                summaryBtn.addKeyListener(new KeyAdapter() {
+                    @Override
+                    public void keyPressed(KeyEvent e) {
+                        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                            showPokemonSummaryDialog(mon, party);
+                        }
+                    }
+                });
                 monPanel.add(summaryBtn, gbc);
                 
                 // Move up button
                 gbc.gridx = 2;
                 JButton upBtn = new JButton("↑");
-                upBtn.setEnabled(i > 0); // Disable for first Pokémon
+                upBtn.setEnabled(i > 0);
                 upBtn.addActionListener(e -> {
                     // Swap with Pokémon above
                     Pokémon temp = party.get(index);
                     party.set(index, party.get(index - 1));
                     party.set(index - 1, temp);
                     updatePartyDisplay(mainPanel, party, dialog);
+                    // Request focus back to the dialog
+                    dialog.requestFocus();
+                    // Set focus to the first button in the updated display
+                    Component[] components = mainPanel.getComponents();
+                    if (components.length > 0) {
+                        JPanel firstMonPanel = (JPanel) components[0];
+                        Component[] buttons = firstMonPanel.getComponents();
+                        for (Component button : buttons) {
+                            if (button instanceof JButton) {
+                                button.requestFocusInWindow();
+                                break;
+                            }
+                        }
+                    }
+                });
+                upBtn.addKeyListener(new KeyAdapter() {
+                    @Override
+                    public void keyPressed(KeyEvent e) {
+                        if (e.getKeyCode() == KeyEvent.VK_ENTER && upBtn.isEnabled()) {
+                            // Swap with Pokémon above
+                            Pokémon temp = party.get(index);
+                            party.set(index, party.get(index - 1));
+                            party.set(index - 1, temp);
+                            updatePartyDisplay(mainPanel, party, dialog);
+                            // Request focus back to the dialog
+                            dialog.requestFocus();
+                            // Set focus to the first button in the updated display
+                            Component[] components = mainPanel.getComponents();
+                            if (components.length > 0) {
+                                JPanel firstMonPanel = (JPanel) components[0];
+                                Component[] buttons = firstMonPanel.getComponents();
+                                for (Component button : buttons) {
+                                    if (button instanceof JButton) {
+                                        button.requestFocusInWindow();
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
                 });
                 monPanel.add(upBtn, gbc);
                 
                 // Move down button
                 gbc.gridx = 3;
                 JButton downBtn = new JButton("↓");
-                downBtn.setEnabled(i < party.size() - 1); // Disable for last Pokémon
+                downBtn.setEnabled(i < party.size() - 1);
                 downBtn.addActionListener(e -> {
                     // Swap with Pokémon below
                     Pokémon temp = party.get(index);
                     party.set(index, party.get(index + 1));
                     party.set(index + 1, temp);
                     updatePartyDisplay(mainPanel, party, dialog);
+                    // Request focus back to the dialog
+                    dialog.requestFocus();
+                    // Set focus to the first button in the updated display
+                    Component[] components = mainPanel.getComponents();
+                    if (components.length > 0) {
+                        JPanel firstMonPanel = (JPanel) components[0];
+                        Component[] buttons = firstMonPanel.getComponents();
+                        for (Component button : buttons) {
+                            if (button instanceof JButton) {
+                                button.requestFocusInWindow();
+                                break;
+                            }
+                        }
+                    }
+                });
+                downBtn.addKeyListener(new KeyAdapter() {
+                    @Override
+                    public void keyPressed(KeyEvent e) {
+                        if (e.getKeyCode() == KeyEvent.VK_ENTER && downBtn.isEnabled()) {
+                            // Swap with Pokémon below
+                            Pokémon temp = party.get(index);
+                            party.set(index, party.get(index + 1));
+                            party.set(index + 1, temp);
+                            updatePartyDisplay(mainPanel, party, dialog);
+                            // Request focus back to the dialog
+                            dialog.requestFocus();
+                            // Set focus to the first button in the updated display
+                            Component[] components = mainPanel.getComponents();
+                            if (components.length > 0) {
+                                JPanel firstMonPanel = (JPanel) components[0];
+                                Component[] buttons = firstMonPanel.getComponents();
+                                for (Component button : buttons) {
+                                    if (button instanceof JButton) {
+                                        button.requestFocusInWindow();
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
                 });
                 monPanel.add(downBtn, gbc);
                 
@@ -1403,6 +1614,15 @@ public class GameFrame extends JFrame{
             // Add a close button at the bottom
             JButton closeBtn = new JButton("Close");
             closeBtn.addActionListener(e -> dialog.dispose());
+            closeBtn.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyPressed(KeyEvent e) {
+                    if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                        dialog.dispose();
+                    }
+                }
+            });
+            
             JPanel closePanel = new JPanel();
             closePanel.add(closeBtn);
             mainPanel.add(closePanel);
