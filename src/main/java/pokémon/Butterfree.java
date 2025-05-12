@@ -2,8 +2,7 @@ package pokémon;
 
 import enums.*;
 import moves.*;
-import ui.GameFrame;
-
+import items.Item;
 import java.util.*;
 
 public class Butterfree extends Pokémon {
