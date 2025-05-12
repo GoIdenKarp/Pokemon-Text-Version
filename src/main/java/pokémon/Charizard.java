@@ -150,8 +150,12 @@ public class Charizard extends Pokémon {
         return WEIGHT;
     }
 
-    public Charizard(int level, Owner owner, GameFrame.InputHelper inputHelper, GameFrame.GamePrinter gamePrinter) {
-        super(level, owner, inputHelper, gamePrinter);
+    public Charizard(int level, Owner owner) {
+        super(level, owner);
+    }
+
+    public Charizard(int level, Owner owner, Item item) {
+        super(level, owner, item);
     }
 
     public Charizard(Charmeleon toEvolve) {

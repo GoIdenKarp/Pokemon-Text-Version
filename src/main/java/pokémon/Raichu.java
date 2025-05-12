@@ -125,8 +125,12 @@ public class Raichu extends Pokémon {
         return WEIGHT;
     }
 
-    public Raichu(int level, Owner owner, GameFrame.InputHelper inputHelper, GameFrame.GamePrinter gamePrinter) {
-        super(level, owner, inputHelper, gamePrinter);
+    public Raichu(int level, Owner owner) {
+        super(level, owner);
+    }
+
+    public Raichu(int level, Owner owner, Item item) {
+        super(level, owner, item);
     }
 
     public Raichu(Pikachu toEvolve) {

@@ -125,8 +125,12 @@ public class Metapod extends Pokémon {
         return WEIGHT;
     }
 
-    public Metapod(int level, Owner owner, GameFrame.InputHelper inputHelper, GameFrame.GamePrinter gamePrinter) {
-        super(level, owner, inputHelper, gamePrinter);
+    public Metapod(int level, Owner owner) {
+        super(level, owner);
+    }
+
+    public Metapod(int level, Owner owner, Item item) {
+        super(level, owner, item);
     }
 
     public Metapod(Caterpie toEvolve) {

@@ -29,6 +29,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class GameFrame extends JFrame{
 
+    private static GameFrame instance;
     private static final int LABEL_HEIGHT = 25;
     private static final ArrayList<Character> vowels = new ArrayList<>(Arrays.asList('a', 'e', 'i', 'o', 'u'));
 
@@ -42,21 +43,27 @@ public class GameFrame extends JFrame{
     private int timeDelay;
 
 
-    public GameFrame(boolean debugMode) {
+    private GameFrame(boolean debugMode) {
         setTitle("Pokémon Text Version");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setSize(1000, 600);
         setResizable(false);
         setLocationRelativeTo(null);
-        battlePrinter = new BattlePrinter();
-        inputHelper = new InputHelper();
+        battlePrinter = BattlePrinter.getInstance();
+        inputHelper = InputHelper.getInstance();
         gameCanvas = new GameCanvas();
-        gamePrinter = new GamePrinter();
+        gamePrinter = GamePrinter.getInstance();
         this.add(gameCanvas);
         setVisible(true);
         timeDelay = (debugMode) ? 0 : 1500;
     }
 
+    public static GameFrame getInstance(boolean debugMode) {
+        if (instance == null) {
+            instance = new GameFrame(debugMode);
+        }
+        return instance;
+    }
 
     public BattlePrinter getBattlePrinter() {
         return battlePrinter;
@@ -134,7 +141,18 @@ public class GameFrame extends JFrame{
         gameCanvas.addString(newString);
     }
 
-    public class BattlePrinter {
+    public static class BattlePrinter {
+
+        private static BattlePrinter instance;
+
+        private BattlePrinter() {}
+
+        public static BattlePrinter getInstance() {
+            if (instance == null) {
+                instance = new BattlePrinter();
+            }
+            return instance;
+        }
 
         private static final String WILD_BATTLE_START = "A wild %s appeared!\n";
         private static final String TRAINER_BATTLE_START = "%s would like to battle!\n";
@@ -1198,7 +1216,18 @@ public class GameFrame extends JFrame{
         mainPanel.repaint();
     }
 
-    public class InputHelper {
+    public static class InputHelper {
+
+        private static InputHelper instance;
+
+        private InputHelper() {}
+
+        public static InputHelper getInstance() {
+            if (instance == null) {
+                instance = new InputHelper();
+            }
+            return instance;
+        }
 
         public static final int NICKNAME_CODE = 0;
 
@@ -1650,7 +1679,18 @@ public class GameFrame extends JFrame{
         }
     }
 
-    public class GamePrinter {
+    public static class GamePrinter {
+
+        private static GamePrinter instance;
+
+        private GamePrinter() {}
+
+        public static GamePrinter getInstance() {
+            if (instance == null) {
+                instance = new GamePrinter();
+            }
+            return instance;
+        }
 
         private static final String PLAYER_NAME_PLACEHOLDER = "{{player}}";
         private static final String RIVAL_NAME_PLACEHOLDER = "{{rival}}";
@@ -1834,7 +1874,7 @@ public class GameFrame extends JFrame{
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        GameFrame gf = new GameFrame(false);
+        GameFrame gf = GameFrame.getInstance(false);
         while(true) {
             String string = scanner.nextLine();
             gf.addString(string);

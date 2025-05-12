@@ -143,8 +143,12 @@ public class Charmeleon extends Pokémon {
         return WEIGHT;
     }
 
-    public Charmeleon(int level, Owner owner, GameFrame.InputHelper inputHelper, GameFrame.GamePrinter gamePrinter) {
-        super(level, owner, inputHelper, gamePrinter);
+    public Charmeleon(int level, Owner owner) {
+        super(level, owner);
+    }
+
+    public Charmeleon(int level, Owner owner, Item item) {
+        super(level, owner, item);
     }
 
     public Charmeleon(Charmander toEvolve) {

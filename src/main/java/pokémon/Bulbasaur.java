@@ -147,8 +147,12 @@ public class Bulbasaur extends Pokémon {
         return genderRatio;
     }
 
-    public Bulbasaur(int level, Owner owner, GameFrame.InputHelper inputHelper, GameFrame.GamePrinter gamePrinter) {
-        super(level, owner, inputHelper, gamePrinter);
+    public Bulbasaur(int level, Owner owner) {
+        super(level, owner);
+    }
+
+    public Bulbasaur(int level, Owner owner, Item item) {
+        super(level, owner, item);
     }
 
 }

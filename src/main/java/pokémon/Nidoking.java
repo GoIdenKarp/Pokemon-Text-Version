@@ -128,8 +128,12 @@ public class Nidoking extends Pokémon {
         return WEIGHT;
     }
 
-    public Nidoking(int level, Owner owner, GameFrame.InputHelper inputHelper, GameFrame.GamePrinter gamePrinter) {
-        super(level, owner, inputHelper, gamePrinter);
+    public Nidoking(int level, Owner owner) {
+        super(level, owner);
+    }
+
+    public Nidoking(int level, Owner owner, Item item) {
+        super(level, owner, item);
     }
 
     public Nidoking(Nidorino toEvolve) {

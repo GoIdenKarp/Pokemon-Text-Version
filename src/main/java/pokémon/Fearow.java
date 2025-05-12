@@ -140,8 +140,12 @@ public class Fearow extends Pokémon{
         return WEIGHT;
     }
 
-    public Fearow(int level, Owner owner, GameFrame.InputHelper inputHelper, GameFrame.GamePrinter gamePrinter) {
-        super(level, owner, inputHelper, gamePrinter);
+    public Fearow(int level, Owner owner) {
+        super(level, owner);
+    }
+
+    public Fearow(int level, Owner owner, Item item) {
+        super(level, owner, item);
     }
 
     public Fearow(Spearow toEvolve) {

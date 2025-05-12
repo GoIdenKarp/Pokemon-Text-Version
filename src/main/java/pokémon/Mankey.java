@@ -144,7 +144,11 @@ public class Mankey extends Pokémon {
         return WEIGHT;
     }
 
-    public Mankey(int level, Owner owner, GameFrame.InputHelper inputHelper, GameFrame.GamePrinter gamePrinter) {
-        super(level, owner, inputHelper, gamePrinter);
+    public Mankey(int level, Owner owner) {
+        super(level, owner);
+    }
+
+    public Mankey(int level, Owner owner, Item item) {
+        super(level, owner, item);
     }
 }

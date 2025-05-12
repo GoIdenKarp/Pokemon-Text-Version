@@ -268,7 +268,7 @@ public abstract class Pokémon implements Cloneable {
     }
 
 	//For new Pokémon
-	public Pokémon(int level, Owner owner, InputHelper inputHelper, GamePrinter gamePrinter) {
+	public Pokémon(int level, Owner owner) {
 		this.level = level;
 		for (int i = 0; i < EVs.length; i++) {
 		    EVs[i] = 0;
@@ -296,8 +296,8 @@ public abstract class Pokémon implements Cloneable {
             e.printStackTrace();
         }
         this.owner = owner;
-        this.inputHelper = inputHelper;
-        this.gamePrinter = gamePrinter;
+        this.inputHelper = GameFrame.getInstance().getInputHelper();
+        this.gamePrinter = GameFrame.getInstance().getGamePrinter();
         this.item = null;
         int genderRoll = ThreadLocalRandom.current().nextInt(1, 101);
         if (getGenderRatio() == -1) {
@@ -313,7 +313,7 @@ public abstract class Pokémon implements Cloneable {
 
     }
 
-    public Pokémon(int level, Owner owner, Item item, InputHelper inputHelper, GamePrinter gamePrinter) {
+    public Pokémon(int level, Owner owner, Item item) {
         this.level = level;
         for (int i = 0; i < EVs.length; i++) {
             EVs[i] = 0;
@@ -341,8 +341,8 @@ public abstract class Pokémon implements Cloneable {
             e.printStackTrace();
         }
         this.owner = owner;
-        this.inputHelper = inputHelper;
-        this.gamePrinter = gamePrinter;
+        this.inputHelper = GameFrame.getInstance().getInputHelper();
+        this.gamePrinter = GameFrame.getInstance().getGamePrinter();
         this.item = item;
         int genderRoll = ThreadLocalRandom.current().nextInt(1, 101);
         if (getGenderRatio() == -1) {
@@ -355,7 +355,6 @@ public abstract class Pokémon implements Cloneable {
         evolveTrigger = false;
         totalEVs = 0;
         uniqueID = ThreadLocalRandom.current().nextInt(1, Integer.MAX_VALUE);
-
     }
 
     //For evolving
@@ -376,8 +375,8 @@ public abstract class Pokémon implements Cloneable {
         critStage = 0;
         sleepTimer = 0;
         this.owner = mon.getOwner();
-        this.inputHelper = mon.inputHelper;
-        this.gamePrinter = mon.gamePrinter;
+        this.inputHelper = GameFrame.getInstance().getInputHelper();
+        this.gamePrinter = GameFrame.getInstance().getGamePrinter();
         this.moveSet = mon.getMoveSet();
         if (getLearnset().containsKey(level)) {
             try {

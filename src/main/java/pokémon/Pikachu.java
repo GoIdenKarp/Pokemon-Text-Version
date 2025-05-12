@@ -156,8 +156,12 @@ public class Pikachu extends Pokémon {
         return WEIGHT;
     }
 
-    public Pikachu(int level, Owner owner, GameFrame.InputHelper inputHelper, GameFrame.GamePrinter gamePrinter) {
-        super(level, owner, inputHelper, gamePrinter);
+    public Pikachu(int level, Owner owner) {
+        super(level, owner);
+    }
+
+    public Pikachu(int level, Owner owner, Item item) {
+        super(level, owner, item);
     }
 
 }

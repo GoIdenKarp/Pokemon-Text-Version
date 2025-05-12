@@ -13,9 +13,9 @@ public class PokémonFactory {
     private GameFrame.GamePrinter gamePrinter;
 
 
-    public PokémonFactory(GameFrame.InputHelper inputHelper, GameFrame.GamePrinter gamePrinter) {
-        this.inputHelper = inputHelper;
-        this.gamePrinter = gamePrinter;
+    public PokémonFactory() {
+        this.inputHelper = GameFrame.getInstance().getInputHelper();
+        this.gamePrinter = GameFrame.getInstance().getGamePrinter();
     }
 
     public Pokémon makePokémon(Species species, int level, Owner owner) {

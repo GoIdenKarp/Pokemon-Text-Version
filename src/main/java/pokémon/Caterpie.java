@@ -125,7 +125,11 @@ public class Caterpie extends Pokémon {
         return WEIGHT;
     }
 
-    public Caterpie(int level, Owner owner, GameFrame.InputHelper inputHelper, GameFrame.GamePrinter gamePrinter) {
-        super(level, owner, inputHelper, gamePrinter);
+    public Caterpie(int level, Owner owner) {
+        super(level, owner);
+    }
+
+    public Caterpie(int level, Owner owner, Item item) {
+        super(level, owner, item);
     }
 }

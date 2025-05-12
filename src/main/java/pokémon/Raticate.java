@@ -148,8 +148,12 @@ public class Raticate extends Pokémon {
         return WEIGHT;
     }
 
-    public Raticate(int level, Owner owner, GameFrame.InputHelper inputHelper, GameFrame.GamePrinter gamePrinter) {
-        super(level, owner, inputHelper, gamePrinter);
+    public Raticate(int level, Owner owner) {
+        super(level, owner);
+    }
+
+    public Raticate(int level, Owner owner, Item item) {
+        super(level, owner, item);
     }
 
     public Raticate(Rattata toEvolve) {

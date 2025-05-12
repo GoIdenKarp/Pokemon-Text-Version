@@ -181,17 +181,16 @@ public class Battle implements Comparator<Action>{
 
     //Constructors
     //Wild
-    public Battle(Player player, Pokémon compParty, Weather weather, GameFrame frame) { this.player = player;
+    public Battle(Player player, Pokémon compParty, Weather weather) {
         this.player = player;
-
         this.compParty = new ArrayList<>();
         this.compParty.add(compParty);
         wild = true;
-        this.battlePrinter = frame.getBattlePrinter();
+        this.battlePrinter = GameFrame.getInstance().getBattlePrinter();
         this.weather = weather;
         weatherTimer = 0;
         battleOver = false;
-        this.inputHelper = frame.getInputHelper();
+        this.inputHelper = GameFrame.getInstance().getInputHelper();
         runAttempts = 0;
         //No wild double battles
         this.isDoubleBattle = false;
@@ -201,16 +200,16 @@ public class Battle implements Comparator<Action>{
     }
 
     //Trainer
-    public Battle(Player player, Trainer oppTrainer, Weather weather, GameFrame frame) {
+    public Battle(Player player, Trainer oppTrainer, Weather weather) {
         this.player = player;
-        this.compParty = oppTrainer.generateParty(new PokémonFactory(frame.getInputHelper(), frame.getGamePrinter()));
+        this.compParty = oppTrainer.generateParty(new PokémonFactory());
         wild = false;
         this.oppTrainer = oppTrainer;
-        this.battlePrinter = frame.getBattlePrinter();
+        this.battlePrinter = GameFrame.getInstance().getBattlePrinter();
         this.weather = weather;
         weatherTimer = 0;
         battleOver = false;
-        this.inputHelper = frame.getInputHelper();
+        this.inputHelper = GameFrame.getInstance().getInputHelper();
         runAttempts = 0;
         this.isDoubleBattle = oppTrainer.isDoubleBattle();
         setUpSides();

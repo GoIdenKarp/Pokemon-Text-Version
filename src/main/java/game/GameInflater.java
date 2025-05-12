@@ -24,7 +24,6 @@ import pokémon.Pokémon;
 import pokémon.PokémonFactory;
 import trainer.PartySlot;
 import trainer.Trainer;
-import ui.GameFrame;
 import util.Keys;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -50,7 +49,7 @@ public class GameInflater {
     }
 
     public static Game inflateRegion(List<Area> gameMap, String gameFile, boolean newGame,
-                                     boolean JAR_MODE, GameFrame gameFrame) throws IOException, BadNameException {
+                                     boolean JAR_MODE) throws IOException, BadNameException {
         System.out.println("Loading game file: " + gameFile);
         try {
             InputStream inputStream;
@@ -82,7 +81,7 @@ public class GameInflater {
             }
                         
             try (Scanner scanner = new Scanner(inputStream).useDelimiter("\\Z")) {
-                PokémonFactory factory = new PokémonFactory(gameFrame.getInputHelper(), gameFrame.getGamePrinter());
+                PokémonFactory factory = new PokémonFactory();
                 String saveData = scanner.next();
                 String decodedSave = new String(DECODER.decode(saveData));
                 JSONObject saveObj = (JSONObject) PARSER.parse(decodedSave);
@@ -118,7 +117,7 @@ public class GameInflater {
                 JSONArray connectionsObj = (JSONArray) saveObj.get(Keys.CONNECTIONS_KEY);
                 addConnections(gameMap, connectionsObj);
                 String saveFile = newGame ? "" : gameFile.split("\\.")[0];
-                Game game = new Game(gameFrame, gameMap, player, prologue, currentArea, saveFile, lastVisited, flyOptions, eventFlags);
+                Game game = new Game(gameMap, player, prologue, currentArea, saveFile, lastVisited, flyOptions, eventFlags);
                 return game;
             }
         } catch (ParseException e) {

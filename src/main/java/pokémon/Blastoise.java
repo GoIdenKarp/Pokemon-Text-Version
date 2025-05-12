@@ -149,8 +149,12 @@ public class Blastoise extends Pokémon {
         return WEIGHT;
     }
 
-    public Blastoise(int level, Owner owner, GameFrame.InputHelper inputHelper, GameFrame.GamePrinter gamePrinter) {
-        super(level, owner, inputHelper, gamePrinter);
+    public Blastoise(int level, Owner owner) {
+        super(level, owner);
+    }
+
+    public Blastoise(int level, Owner owner, Item item) {
+        super(level, owner, item);
     }
 
     public Blastoise(Wartortle toEvolve) {

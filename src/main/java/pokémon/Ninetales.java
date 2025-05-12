@@ -127,8 +127,12 @@ public class Ninetales extends Pokémon {
         return WEIGHT;
     }
 
-    public Ninetales(int level, Owner owner, GameFrame.InputHelper inputHelper, GameFrame.GamePrinter gamePrinter) {
-        super(level, owner, inputHelper, gamePrinter);
+    public Ninetales(int level, Owner owner) {
+        super(level, owner);
+    }
+
+    public Ninetales(int level, Owner owner, Item item) {
+        super(level, owner, item);
     }
 
     public Ninetales(Vulpix toEvolve) {

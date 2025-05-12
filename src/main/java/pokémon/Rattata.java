@@ -148,7 +148,11 @@ public class Rattata extends Pokémon {
         return WEIGHT;
     }
 
-    public Rattata(int level, Owner owner, GameFrame.InputHelper inputHelper, GameFrame.GamePrinter gamePrinter) {
-        super(level, owner, inputHelper, gamePrinter);
+    public Rattata(int level, Owner owner) {
+        super(level, owner);
+    }
+
+    public Rattata(int level, Owner owner, Item item) {
+        super(level, owner, item);
     }
 }

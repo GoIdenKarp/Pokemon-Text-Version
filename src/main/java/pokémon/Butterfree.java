@@ -150,8 +150,12 @@ public class Butterfree extends Pokémon {
         return WEIGHT;
     }
 
-    public Butterfree(int level, Owner owner, GameFrame.InputHelper inputHelper, GameFrame.GamePrinter gamePrinter) {
-        super(level, owner, inputHelper, gamePrinter);
+    public Butterfree(int level, Owner owner) {
+        super(level, owner);
+    }
+
+    public Butterfree(int level, Owner owner, Item item) {
+        super(level, owner, item);
     }
 
     public Butterfree(Metapod toEvolve) {

@@ -150,8 +150,12 @@ public class Pidgeotto extends Pokémon {
         return WEIGHT;
     }
 
-    public Pidgeotto(int level, Owner owner, GameFrame.InputHelper inputHelper, GameFrame.GamePrinter gamePrinter) {
-        super(level, owner, inputHelper, gamePrinter);
+    public Pidgeotto(int level, Owner owner) {
+        super(level, owner);
+    }
+
+    public Pidgeotto(int level, Owner owner, Item item) {
+        super(level, owner, item);
     }
 
     public Pidgeotto(Pidgey toEvolve) {
