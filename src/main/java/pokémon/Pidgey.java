@@ -150,8 +150,12 @@ public class Pidgey extends Pokémon {
         return WEIGHT;
     }
 
-    public Pidgey(int level, Owner owner, GameFrame.InputHelper inputHelper, GameFrame.GamePrinter gamePrinter) {
-        super(level, owner, inputHelper, gamePrinter);
+    public Pidgey(int level, Owner owner) {
+        super(level, owner);
+    }
+
+    public Pidgey(int level, Owner owner, Item item) {
+        super(level, owner, item);
     }
 
 }

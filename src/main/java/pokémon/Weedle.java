@@ -125,7 +125,11 @@ public class Weedle extends Pokémon {
         return WEIGHT;
     }
 
-    public Weedle(int level, Owner owner, GameFrame.InputHelper inputHelper, GameFrame.GamePrinter gamePrinter) {
-        super(level, owner, inputHelper, gamePrinter);
+    public Weedle(int level, Owner owner) {
+        super(level, owner);
+    }
+
+    public Weedle(int level, Owner owner, Item item) {
+        super(level, owner, item);
     }
 }

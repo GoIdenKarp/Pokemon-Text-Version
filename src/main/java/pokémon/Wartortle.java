@@ -149,8 +149,12 @@ public class Wartortle extends Pokémon {
         return WEIGHT;
     }
 
-    public Wartortle(int level, Owner owner, GameFrame.InputHelper inputHelper, GameFrame.GamePrinter gamePrinter) {
-        super(level, owner, inputHelper, gamePrinter);
+    public Wartortle(int level, Owner owner) {
+        super(level, owner);
+    }
+
+    public Wartortle(int level, Owner owner, Item item) {
+        super(level, owner, item);
     }
 
     public Wartortle(Squirtle toEvolve) {

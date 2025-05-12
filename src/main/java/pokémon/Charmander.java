@@ -143,8 +143,12 @@ public class Charmander extends Pokémon {
         return WEIGHT;
     }
 
-    public Charmander(int level, Owner owner, GameFrame.InputHelper inputHelper, GameFrame.GamePrinter gamePrinter) {
-        super(level, owner, inputHelper, gamePrinter);
+    public Charmander(int level, Owner owner) {
+        super(level, owner);
+    }
+
+    public Charmander(int level, Owner owner, Item item) {
+        super(level, owner, item);
     }
 
 }

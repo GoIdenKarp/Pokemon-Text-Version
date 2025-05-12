@@ -147,8 +147,12 @@ public class Primeape extends Pokémon {
         return WEIGHT;
     }
 
-    public Primeape(int level, Owner owner, GameFrame.InputHelper inputHelper, GameFrame.GamePrinter gamePrinter) {
-        super(level, owner, inputHelper, gamePrinter);
+    public Primeape(int level, Owner owner) {
+        super(level, owner);
+    }
+
+    public Primeape(int level, Owner owner, Item item) {
+        super(level, owner, item);
     }
 
     public Primeape(Mankey toEvolve) {

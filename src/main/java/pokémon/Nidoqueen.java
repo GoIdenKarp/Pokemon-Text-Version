@@ -128,8 +128,12 @@ public class Nidoqueen extends Pokémon {
         return WEIGHT;
     }
 
-    public Nidoqueen(int level, Owner owner, GameFrame.InputHelper inputHelper, GameFrame.GamePrinter gamePrinter) {
-        super(level, owner, inputHelper, gamePrinter);
+    public Nidoqueen(int level, Owner owner) {
+        super(level, owner);
+    }
+
+    public Nidoqueen(int level, Owner owner, Item item) {
+        super(level, owner, item);
     }
 
     public Nidoqueen(Nidorina toEvolve) {

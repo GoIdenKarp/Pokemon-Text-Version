@@ -44,8 +44,7 @@ public class GameStarter {
 
 
     public GameStarter() {
-        gameFrame = new GameFrame(DEBUG_MODE);
-
+        gameFrame = GameFrame.getInstance(DEBUG_MODE);
     }
 
     public void startGame() {
@@ -111,11 +110,6 @@ public class GameStarter {
                     "Please select which save you would like to load:");
             startKanto(false, saveChoice);
         }
-            // String gameChoice = gameFrame.getInputHelper().getInputFromOptions(REGION_OPTIONS, "Game Selection",
-            //         "Please select which region you would like to play:");
-            // if (gameChoice.equals(KANTO)) {
-
-            // }
     }
 
     private List<String> findSaves() {
@@ -145,7 +139,7 @@ public class GameStarter {
         }
         try {
             ArrayList<Area> gameMap = Region.createRegion(KANTO_MAP, JAR_MODE);
-            Game game = GameInflater.inflateRegion(gameMap, savePath, newgame, JAR_MODE, gameFrame);
+            Game game = GameInflater.inflateRegion(gameMap, savePath, newgame, JAR_MODE);
             if (newgame) {
                 game.startNew();
             } else {

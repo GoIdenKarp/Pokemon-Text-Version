@@ -141,7 +141,11 @@ public class Ekans extends Pokémon {
         return WEIGHT;
     }
 
-    public Ekans(int level, Owner owner, GameFrame.InputHelper inputHelper, GameFrame.GamePrinter gamePrinter) {
-        super(level, owner, inputHelper, gamePrinter);
+    public Ekans(int level, Owner owner) {
+        super(level, owner);
+    }
+
+    public Ekans(int level, Owner owner, Item item) {
+        super(level, owner, item);
     }
 }

@@ -126,8 +126,12 @@ public class Kakuna extends Pokémon {
         return WEIGHT;
     }
 
-    public Kakuna(int level, Owner owner, GameFrame.InputHelper inputHelper, GameFrame.GamePrinter gamePrinter) {
-        super(level, owner, inputHelper, gamePrinter);
+    public Kakuna(int level, Owner owner) {
+        super(level, owner);
+    }
+
+    public Kakuna(int level, Owner owner, Item item) {
+        super(level, owner, item);
     }
 
     public Kakuna(Weedle toEvolve) {

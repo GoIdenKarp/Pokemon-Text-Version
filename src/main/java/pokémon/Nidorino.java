@@ -141,8 +141,12 @@ public class Nidorino extends Pokémon {
         return WEIGHT;
     }
 
-    public Nidorino(int level, Owner owner, GameFrame.InputHelper inputHelper, GameFrame.GamePrinter gamePrinter) {
-        super(level, owner, inputHelper, gamePrinter);
+    public Nidorino(int level, Owner owner) {
+        super(level, owner);
+    }
+
+    public Nidorino(int level, Owner owner, Item item) {
+        super(level, owner, item);
     }
 
     public Nidorino(NidoranM toEvolve) {

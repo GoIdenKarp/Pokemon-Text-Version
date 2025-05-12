@@ -150,8 +150,12 @@ public class Beedrill extends Pokémon {
         return WEIGHT;
     }
 
-    public Beedrill(int level, Owner owner, GameFrame.InputHelper inputHelper, GameFrame.GamePrinter gamePrinter) {
-        super(level, owner, inputHelper, gamePrinter);
+    public Beedrill(int level, Owner owner) {
+        super(level, owner);
+    }
+
+    public Beedrill(int level, Owner owner, Item item) {
+        super(level, owner, item);
     }
 
     public Beedrill(Kakuna toEvolve) {

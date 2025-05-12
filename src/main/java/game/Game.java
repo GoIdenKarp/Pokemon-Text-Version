@@ -70,9 +70,9 @@ public class Game {
     private int starterChoice = -1;
     private List<String> prologue;
 
-    public Game(GameFrame gameFrame, List<Area> areaList, Player player, List<String> prologue, String startingArea) {
-        this.gameFrame = gameFrame;
-        factory = new PokémonFactory(gameFrame.getInputHelper(), gameFrame.getGamePrinter());
+    public Game(List<Area> areaList, Player player, List<String> prologue, String startingArea) {
+        this.gameFrame = GameFrame.getInstance();
+        factory = new PokémonFactory();
         this.areaList = areaList;
         makeWorldMap();
         saveFile = "";
@@ -85,9 +85,9 @@ public class Game {
         flyOptions.add(currentArea);
     }
 
-    public Game(GameFrame gameFrame, List<Area> areaList, Player player, List<String> prologue, String startingArea, String saveFile, String lastVisited, List<String> flyOptions, Set<String> eventFlags) {
-        this.gameFrame = gameFrame;
-        factory = new PokémonFactory(gameFrame.getInputHelper(), gameFrame.getGamePrinter());
+    public Game(List<Area> areaList, Player player, List<String> prologue, String startingArea, String saveFile, String lastVisited, List<String> flyOptions, Set<String> eventFlags) {
+        this.gameFrame = GameFrame.getInstance();
+        factory = new PokémonFactory();
         this.areaList = areaList;
         makeWorldMap();
         this.player = player;
@@ -580,12 +580,12 @@ public class Game {
     }
 
     private void startBattle(Pokémon wildMon) {
-        new Battle(player, wildMon, currentArea.getWeather(), gameFrame).battle();
+        new Battle(player, wildMon, currentArea.getWeather()).battle();
         checkForEvolution();
     }
 
     private void startBattle(Trainer trainer) {
-        new Battle(player, trainer, currentArea.getWeather(), gameFrame).battle();
+        new Battle(player, trainer, currentArea.getWeather()).battle();
         checkForEvolution();
     }
 

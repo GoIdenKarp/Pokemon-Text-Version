@@ -24,7 +24,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import org.json.simple.JSONObject;
-import ui.GameFrame;
 import java.io.File;
 
 public class GameSaver {
