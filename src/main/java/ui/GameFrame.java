@@ -30,8 +30,8 @@ import java.util.concurrent.TimeUnit;
 public class GameFrame extends JFrame{
 
     private static GameFrame instance;
-    private static final int LABEL_HEIGHT = 25;
-    private static final ArrayList<Character> vowels = new ArrayList<>(Arrays.asList('a', 'e', 'i', 'o', 'u'));
+    private final int LABEL_HEIGHT = 25;
+    private final ArrayList<Character> vowels = new ArrayList<>(Arrays.asList('a', 'e', 'i', 'o', 'u'));
 
     private GameCanvas gameCanvas;
 
@@ -49,10 +49,10 @@ public class GameFrame extends JFrame{
         setSize(1000, 600);
         setResizable(false);
         setLocationRelativeTo(null);
-        battlePrinter = BattlePrinter.getInstance();
-        inputHelper = InputHelper.getInstance();
+        battlePrinter = new BattlePrinter();
+        inputHelper = new InputHelper();
         gameCanvas = new GameCanvas();
-        gamePrinter = GamePrinter.getInstance();
+        gamePrinter = new GamePrinter();
         this.add(gameCanvas);
         setVisible(true);
         timeDelay = (debugMode) ? 0 : 1500;
@@ -64,6 +64,15 @@ public class GameFrame extends JFrame{
         }
         return instance;
     }
+
+    public static GameFrame getInstance() {
+        if (instance == null) {
+            instance = new GameFrame(false);
+        }
+        return instance;
+    }
+
+
 
     public BattlePrinter getBattlePrinter() {
         return battlePrinter;
@@ -136,23 +145,14 @@ public class GameFrame extends JFrame{
     }
 
 
-    public  void addString(String newString) {
+    public static void addString(String newString) {
 
-        gameCanvas.addString(newString);
+        GameFrame.getInstance().gameCanvas.addString(newString);
     }
 
-    public static class BattlePrinter {
+    public class BattlePrinter {
 
-        private static BattlePrinter instance;
-
-        private BattlePrinter() {}
-
-        public static BattlePrinter getInstance() {
-            if (instance == null) {
-                instance = new BattlePrinter();
-            }
-            return instance;
-        }
+        public BattlePrinter() {}
 
         private static final String WILD_BATTLE_START = "A wild %s appeared!\n";
         private static final String TRAINER_BATTLE_START = "%s would like to battle!\n";
@@ -1029,7 +1029,7 @@ public class GameFrame extends JFrame{
     }
 
     public void displayParty(ArrayList<Pokémon> party) {
-        JDialog dialog = new JDialog(GameFrame.this, "Your Party", true);
+        JDialog dialog = new JDialog(this, "Your Party", true);
         dialog.setLayout(new BoxLayout(dialog.getContentPane(), BoxLayout.Y_AXIS));
         
         // Create a panel to hold all Pokémon panels
@@ -1042,7 +1042,7 @@ public class GameFrame extends JFrame{
         
         // Set dialog properties and show it
         dialog.pack();
-        dialog.setLocationRelativeTo(GameFrame.this);
+        dialog.setLocationRelativeTo(this);
         dialog.setVisible(true);
     }
 
@@ -1216,18 +1216,9 @@ public class GameFrame extends JFrame{
         mainPanel.repaint();
     }
 
-    public static class InputHelper {
+    public class InputHelper {
 
-        private static InputHelper instance;
-
-        private InputHelper() {}
-
-        public static InputHelper getInstance() {
-            if (instance == null) {
-                instance = new InputHelper();
-            }
-            return instance;
-        }
+        public InputHelper() {}
 
         public static final int NICKNAME_CODE = 0;
 
@@ -1679,18 +1670,9 @@ public class GameFrame extends JFrame{
         }
     }
 
-    public static class GamePrinter {
+    public class GamePrinter {
 
-        private static GamePrinter instance;
-
-        private GamePrinter() {}
-
-        public static GamePrinter getInstance() {
-            if (instance == null) {
-                instance = new GamePrinter();
-            }
-            return instance;
-        }
+        public GamePrinter() {}
 
         private static final String PLAYER_NAME_PLACEHOLDER = "{{player}}";
         private static final String RIVAL_NAME_PLACEHOLDER = "{{rival}}";

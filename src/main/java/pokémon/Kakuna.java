@@ -3,7 +3,7 @@ package pokémon;
 import enums.*;
 import moves.Harden;
 import moves.Move;
-import ui.GameFrame;
+import items.Item;
 
 import java.util.*;
 

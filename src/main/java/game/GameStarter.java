@@ -67,7 +67,7 @@ public class GameStarter {
 
     private void startBattleMode() {
         Player ari = new Player("Ari", "Evil Ari");
-        PokémonFactory factory = new PokémonFactory(gameFrame.getInputHelper(), gameFrame.getGamePrinter());
+        PokémonFactory factory = new PokémonFactory();
         Pokémon myVenusaur = factory.makePokémon(Species.VENUSAUR, 50, Owner.PLAYER);
         Pokémon myCharizard = factory.makePokémon(Species.CHARIZARD, 50, Owner.PLAYER);
         Pokémon myBlastoise = factory.makePokémon(Species.BLASTOISE, 50, Owner.PLAYER);
@@ -98,7 +98,7 @@ public class GameStarter {
         ArrayList<PartySlot> compParty = new ArrayList<>(Arrays.asList(compCharizard, compVenusaur, compBlastoise));
         Trainer testTrainer = new Trainer("Tester", "Joe", "Ready for a battle?","Lookin' good, Ari!",
                 "The circle is now complete.", 1, false, compParty);
-        new Battle(ari, testTrainer, Weather.NONE, gameFrame).battle();
+        new Battle(ari, testTrainer, Weather.NONE).battle();
     }
 
     private void startAdventureMode(boolean newGame) {
