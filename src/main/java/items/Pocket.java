@@ -13,9 +13,12 @@ public class Pocket {
     }
 
     public void addItem(Item newItem, int amt) {
-        if (itemList.containsKey(newItem)) {
-            itemList.put(newItem, itemList.get(newItem) + amt);
+        Item existingItem = getItemByName(newItem.getName());
+        if (existingItem != null) {
+            // Item with same name already exists, update its quantity
+            itemList.put(existingItem, itemList.get(existingItem) + amt);
         } else {
+            // This is a new item type, add it to the map
             itemList.put(newItem, amt);
         }
     }

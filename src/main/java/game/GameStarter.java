@@ -12,6 +12,7 @@ import pokémon.PokémonFactory;
 import trainer.PartySlot;
 import trainer.Trainer;
 import ui.GameFrame;
+import game.Region;
 
 import java.io.File;
 import java.io.FileNotFoundException;

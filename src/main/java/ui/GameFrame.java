@@ -9,6 +9,7 @@ import enums.*;
 import game.Player;
 import items.Bag;
 import items.Item;
+import items.ItemMapper;
 import moves.Move;
 import moves.ChargeMove;
 import pokémon.Pokémon;
@@ -22,6 +23,8 @@ import java.awt.event.KeyListener;
 import java.awt.event.KeyAdapter;
 import java.util.*;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -1442,8 +1445,8 @@ public class GameFrame extends JFrame{
 
         /**
          * Run the Poké Mart interface: buying and selling
-         * @param player
-         * @param availableItems
+         * @param player The player who is buying/selling
+         * @param availableItems List of items available to buy
          */
         public void runMart(Player player, ArrayList<String> availableItems) {
             JPanel jPanel = new JPanel();
@@ -1469,16 +1472,229 @@ public class GameFrame extends JFrame{
                     }
                 }
             }
-
-
         }
 
-        //TODO
+        /**
+         * Handles buying items from the Mart
+         * @param player The player who is buying
+         * @param availableItems List of items available to buy
+         */
         private void buyFromMart(Player player, ArrayList<String> availableItems) {
+            if (availableItems.isEmpty()) {
+                JOptionPane.showMessageDialog(GameFrame.this, "Sorry, we don't have any items for sale right now.");
+                return;
+            }
+            
+            // Map the encoded item names to items and create display strings
+            ArrayList<String> displayItems = new ArrayList<>();
+            Map<String, Item> itemMap = new HashMap<>();
+            
+            for (String itemCode : availableItems) {
+                try {
+                    Item item = ItemMapper.map(itemCode);
+                    if (item != null) {
+                        String displayString = item.getName() + " - $" + item.getCost();
+                        displayItems.add(displayString);
+                        itemMap.put(displayString, item);
+                    }
+                } catch (Exception e) {
+                    // Skip any items that can't be mapped
+                    System.err.println("Could not map item: " + itemCode);
+                }
+            }
+            
+            // Add a cancel option
+            displayItems.add("Cancel");
+            
+            while (true) {
+                String choice = getInputFromOptions(displayItems, "Buy Items", 
+                        "Your money: $" + player.getMoney() + "\nWhat would you like to buy?");
+                
+                if (choice.equals("Cancel")) {
+                    return;
+                }
+                
+                Item selectedItem = itemMap.get(choice);
+                if (selectedItem == null) {
+                    JOptionPane.showMessageDialog(GameFrame.this, "Error: Item not found.");
+                    continue;
+                }
+                
+                int price = selectedItem.getCost();
+                String itemName = selectedItem.getName();
+                
+                if (price > player.getMoney()) {
+                    JOptionPane.showMessageDialog(GameFrame.this, "You don't have enough money!");
+                    continue;
+                }
+                
+                // Ask for quantity
+                String quantityStr = JOptionPane.showInputDialog(GameFrame.this, 
+                        "How many " + itemName + "(s) would you like to buy?\nPrice: $" + price + " each", "1");
+                
+                if (quantityStr == null) {
+                    continue; // User canceled
+                }
+                
+                try {
+                    int quantity = Integer.parseInt(quantityStr);
+                    if (quantity <= 0) {
+                        JOptionPane.showMessageDialog(GameFrame.this, "Please enter a valid quantity.");
+                        continue;
+                    }
+                    
+                    int totalCost = price * quantity;
+                    if (totalCost > player.getMoney()) {
+                        JOptionPane.showMessageDialog(GameFrame.this, 
+                                "You don't have enough money to buy " + quantity + " " + itemName + "(s).");
+                        continue;
+                    }
+                    
+                    // Confirm purchase
+                    boolean confirm = getYesOrNo("Buy " + quantity + " " + itemName + "(s) for $" + totalCost + "?");
+                    if (!confirm) {
+                        continue;
+                    }
+                    
+                    // Process purchase
+                    player.getBag().addItem(selectedItem, quantity);
+                    player.loseMoney(totalCost);
+                    JOptionPane.showMessageDialog(GameFrame.this, 
+                            "You bought " + quantity + " " + itemName + "(s) for $" + totalCost + "!");
+                    GameFrame.addString("You bought " + quantity + " " + itemName + "(s) for $" + totalCost + "!");
+                } catch (NumberFormatException e) {
+                    JOptionPane.showMessageDialog(GameFrame.this, "Please enter a valid quantity.");
+                }
+            }
         }
 
-        //TODO
+        /**
+         * Handles selling items to the Mart
+         * @param player The player who is selling
+         */
         private void sellToMart(Player player) {
+            // Create a list of available categories excluding key items
+            ArrayList<String> categories = new ArrayList<>();
+            categories.add("Healing Items");
+            categories.add("Poké Balls");
+            categories.add("Berries");
+            categories.add("TMs");
+            categories.add("Misc Items");
+            categories.add("Cancel");
+            
+            while (true) {
+                String categoryChoice = getInputFromOptions(categories, "Sell Items", 
+                        "What type of item would you like to sell?");
+                
+                if (categoryChoice.equals("Cancel")) {
+                    return;
+                }
+                
+                // Get items based on selected category
+                ArrayList<String> itemsToSell = new ArrayList<>();
+                switch (categoryChoice) {
+                    case "Healing Items":
+                        itemsToSell = player.getBag().getHealingItems();
+                        break;
+                    case "Poké Balls":
+                        itemsToSell = player.getBag().getBalls();
+                        break;
+                    case "Berries":
+                        itemsToSell = player.getBag().getBerries();
+                        break;
+                    case "TMs":
+                        itemsToSell = player.getBag().getTMs();
+                        break;
+                    case "Misc Items":
+                        itemsToSell = player.getBag().getMiscItems();
+                        break;
+                }
+                
+                // If no items in this category
+                if (itemsToSell.isEmpty()) {
+                    JOptionPane.showMessageDialog(GameFrame.this, 
+                            "You don't have any items in this category to sell.");
+                    continue;
+                }
+                
+                // Add cancel option to item list
+                itemsToSell.add("Cancel");
+                
+                // Let player select an item to sell
+                String itemChoice = getInputFromOptions(itemsToSell, "Sell Items", 
+                        "Which item would you like to sell?");
+                
+                if (itemChoice.equals("Cancel")) {
+                    continue;
+                }
+                
+                // Parse item name and quantity from string format "ItemName | Quantity"
+                String[] itemParts = itemChoice.split(" \\| ");
+                String itemName = itemParts[0];
+                int ownedQuantity = Integer.parseInt(itemParts[1]);
+                
+                // Get the actual item object
+                Item itemToSell = player.getBag().getItemByName(itemName);
+                if (itemToSell == null) {
+                    JOptionPane.showMessageDialog(GameFrame.this, "Error: Could not find this item.");
+                    continue;
+                }
+                
+                // Calculate sell price (half of buy price)
+                int sellPrice = itemToSell.getCost() / 2;
+                if (sellPrice <= 0) {
+                    sellPrice = 1; // Minimum sell price
+                }
+                
+                // Ask for quantity to sell
+                String quantityStr = JOptionPane.showInputDialog(GameFrame.this, 
+                        "How many " + itemName + "(s) would you like to sell?\n" + 
+                        "Sell price: $" + sellPrice + " each\n" +
+                        "You have: " + ownedQuantity, "1");
+                
+                if (quantityStr == null) {
+                    continue; // User canceled
+                }
+                
+                try {
+                    int quantity = Integer.parseInt(quantityStr);
+                    
+                    // Validate quantity
+                    if (quantity <= 0) {
+                        JOptionPane.showMessageDialog(GameFrame.this, "Please enter a valid quantity.");
+                        continue;
+                    }
+                    
+                    if (quantity > ownedQuantity) {
+                        JOptionPane.showMessageDialog(GameFrame.this, 
+                                "You don't have that many to sell.");
+                        continue;
+                    }
+                    
+                    // Calculate total sell value
+                    int totalValue = sellPrice * quantity;
+                    
+                    // Confirm sale
+                    boolean confirm = getYesOrNo("Sell " + quantity + " " + itemName + 
+                            "(s) for $" + totalValue + "?");
+                    if (!confirm) {
+                        continue;
+                    }
+                    
+                    // Process the sale
+                    for (int i = 0; i < quantity; i++) {
+                        player.getBag().useItem(itemToSell);
+                    }
+                    
+                    player.addMoney(totalValue);
+                    JOptionPane.showMessageDialog(GameFrame.this, 
+                            "You sold " + quantity + " " + itemName + "(s) for $" + totalValue + "!");
+                    GameFrame.addString("You sold " + quantity + " " + itemName + "(s) for $" + totalValue + "!");
+                    
+                } catch (NumberFormatException e) {
+                    JOptionPane.showMessageDialog(GameFrame.this, "Please enter a valid quantity.");
+                }
+            }
         }
 
         private void updatePartyDisplay(JPanel mainPanel, ArrayList<Pokémon> party, JDialog dialog) {

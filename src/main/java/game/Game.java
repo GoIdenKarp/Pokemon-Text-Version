@@ -52,8 +52,9 @@ public class Game {
     private static final String EXIT_OPTION = "Exit Game";
     private static final String POKEDEX_OPTION = "View the Pokédex";
     private static final String AREA_CHOICE_PROMPT = "What would you like to do?";
-    private static final ArrayList<String> noBadgeItems = new ArrayList<>(Arrays.asList("Antidote", "ParalyzeHeal", "Potion", "Poké Ball"));
-    private static final ArrayList<ArrayList<String>> martStock = new ArrayList<>(Arrays.asList(noBadgeItems));
+    private static final ArrayList<String> noBadgeItems = new ArrayList<>(Arrays.asList("ANTIDOTE", "PARALYZHL", "POTION", "POKEBALL"));
+    private static final ArrayList<String> oneBadgeItems = new ArrayList<>(Arrays.asList("SUPOTION"));
+    private static final ArrayList<ArrayList<String>> martStock = new ArrayList<>(Arrays.asList(noBadgeItems, oneBadgeItems));
 
     private final GameFrame gameFrame;
 

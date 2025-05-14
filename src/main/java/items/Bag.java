@@ -37,6 +37,7 @@ public class Bag {
             indexToAdd = KEY_ITEM_INDEX;
         }
 
+        // Pocket.addItem() now handles items with the same name
         pockets[indexToAdd].addItem(newItem, quantity);
     }
 
